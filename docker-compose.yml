@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  gtavlivemap.core:
+    container_name: 'gtav-live-map-api'
+    image: ${DOCKER_REGISTRY-}gtavlivemapcore
+    build:
+      context: GTAVLiveMap.Core
+      dockerfile: Dockerfile
+    ports:
+      - '8090:80'
+    depends_on:
+      - 'postgres'
+    networks:
+      - gtavlivemap-network
+  postgres:
+    ports:
+      - '5432:5432'
+    container_name: gtav-live-map-postgresql
+    environment:
+      - POSTGRES_PASSWORD=mypass
+    volumes:
+      - 'gtavlivemap-postgresql-volume:/var/lib/postgresql/data'
+    image: 'postgres:10.4'
+    networks:
+      - gtavlivemap-network
+
+volumes:
+  gtavlivemap-postgresql-volume:
+
+networks:
+  gtavlivemap-network:
+    driver: bridge
