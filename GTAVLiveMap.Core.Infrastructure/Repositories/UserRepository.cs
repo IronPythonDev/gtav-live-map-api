@@ -13,8 +13,13 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
     {
         public UserRepository(DbContext dbContext) : base(dbContext) { }
 
-        public void Add(User obj) =>
-            DbContext.Execute("INSERT INTO public.\"Users\"(\"Email\") VALUES(@Email);", new { Email = obj.Email });
+        public async Task<User> Add(User obj)
+        {
+            var db = DbContext.GetConnection();
+
+            return (await db.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"") VALUES(@Email);
+                                                SELECT * FROM public.""Users"" WHERE ""Email"" = @Email;", new { Email = obj.Email })).FirstOrDefault();
+        }
 
         public void DeleteById(int id) =>
             DbContext.Execute("DELETE FROM public.\"Users\" WHERE \"Id\" = @Id;", new { Id = id });

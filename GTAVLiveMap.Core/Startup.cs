@@ -45,6 +45,7 @@ namespace GTAVLiveMap.Core
 
             services.AddSingleton<DbContext>();
             services.AddSingleton<IUserRepository , UserRepository>();
+            services.AddSingleton<ISessionKeyRepository , SessionKeyRepository>();
 
             services.AddControllers();
             services.AddSignalR();

@@ -8,7 +8,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 {
     public interface IRepository<T>
     {
-        void Add(T obj);
+        Task<T> Add(T obj);
         void DeleteById(int id);
         void Update(T obj);
         Task<T> GetById(int id);
