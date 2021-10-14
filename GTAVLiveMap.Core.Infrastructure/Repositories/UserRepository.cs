@@ -1,20 +1,17 @@
 ﻿using Dapper;
-using GTAVLiveMap.Core.Contexts;
-using GTAVLiveMap.Core.Entityes;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
+using GTAVLiveMap.Core.Infrastructure.Contexts;
+using GTAVLiveMap.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace GTAVLiveMap.Core.Repositories
+namespace GTAVLiveMap.Core.Infrastructure.Repositories
 {
-    public class UserRepository : BaseRepository , IUserRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
-        public UserRepository(DbContext dbContext): base(dbContext) { }
+        public UserRepository(DbContext dbContext) : base(dbContext) { }
 
         public void Add(User obj) =>
             DbContext.Execute("INSERT INTO public.\"Users\"(\"Email\") VALUES(@Email);", new { Email = obj.Email });
@@ -27,8 +24,8 @@ namespace GTAVLiveMap.Core.Repositories
             var db = DbContext.GetConnection();
 
             return (await db.QueryAsync<User>(
-                $"SELECT * FROM public.\"Users\" ORDER BY \"Id\" LIMIT @Limit OFFSET @Offset" , 
-                new { Limit = limit , Offset = offset })).ToList();
+                $"SELECT * FROM public.\"Users\" ORDER BY \"Id\" LIMIT @Limit OFFSET @Offset",
+                new { Limit = limit, Offset = offset })).ToList();
         }
 
         public async Task<User> GetById(int id)

@@ -1,10 +1,6 @@
-﻿using GTAVLiveMap.Core.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GTAVLiveMap.Core.Infrastructure.Contexts;
 
-namespace GTAVLiveMap.Core.Repositories
+namespace GTAVLiveMap.Core.Infrastructure.Repositories
 {
     public class BaseRepository
     {

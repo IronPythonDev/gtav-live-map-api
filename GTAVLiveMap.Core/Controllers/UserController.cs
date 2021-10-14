@@ -1,6 +1,5 @@
-﻿using GTAVLiveMap.Core.Contexts;
-using GTAVLiveMap.Core.DTOs.Requests;
-using GTAVLiveMap.Core.Repositories;
+﻿using GTAVLiveMap.Core.DTOs.Requests;
+using GTAVLiveMap.Core.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -29,7 +28,7 @@ namespace GTAVLiveMap.Core.Controllers
         [HttpPost]
         public IActionResult CreateUser([FromBody] CreateUserDTO createUserDTO)
         {
-            UserRepository.Add(new Entityes.User { Email = createUserDTO.Email });
+            UserRepository.Add(new Domain.Entities.User { Email = createUserDTO.Email });
 
             return Ok();
         }

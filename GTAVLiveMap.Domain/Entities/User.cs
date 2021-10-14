@@ -1,4 +1,4 @@
-﻿namespace GTAVLiveMap.Core.Entityes
+﻿namespace GTAVLiveMap.Domain.Entities
 {
     public class User : Identity<int>
     {

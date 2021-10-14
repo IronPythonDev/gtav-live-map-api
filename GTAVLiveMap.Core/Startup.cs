@@ -1,8 +1,8 @@
 using FluentMigrator.Runner;
-using GTAVLiveMap.Core.Contexts;
 using GTAVLiveMap.Core.Hubs;
+using GTAVLiveMap.Core.Infrastructure.Contexts;
+using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Migrations;
-using GTAVLiveMap.Core.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;

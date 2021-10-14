@@ -17,4 +17,9 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GTAVLiveMap.Core.Infrastructure\GTAVLiveMap.Core.Infrastructure.csproj" />
+    <ProjectReference Include="..\GTAVLiveMap.Domain\GTAVLiveMap.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

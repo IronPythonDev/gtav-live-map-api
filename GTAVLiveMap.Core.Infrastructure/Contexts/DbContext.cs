@@ -1,11 +1,13 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace GTAVLiveMap.Core.Contexts
+namespace GTAVLiveMap.Core.Infrastructure.Contexts
 {
     public class DbContext
     {
@@ -47,7 +49,7 @@ namespace GTAVLiveMap.Core.Contexts
                 CreateDatabase(dbName);
         }
 
-        public async Task<IEnumerable<TReturn>> Query<TReturn>(string sql , object param)
+        public async Task<IEnumerable<TReturn>> Query<TReturn>(string sql, object param)
         {
             var connection = GetConnection();
 
