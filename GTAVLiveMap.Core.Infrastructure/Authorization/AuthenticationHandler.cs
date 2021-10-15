@@ -58,13 +58,15 @@ namespace GTAVLiveMap.Core.Infrastructure.Authorization
             if (user == null)
                 return AuthenticateResult.Fail("Unauthorized");
 
+            var roles = user.Roles.ToLower().Split(';');
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier , $"{sessionKeyObject.OwnerId}")
             };
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new System.Security.Principal.GenericPrincipal(identity, user.Roles.Split(';'));
+            var principal = new System.Security.Principal.GenericPrincipal(identity, roles);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
             return AuthenticateResult.Success(ticket);

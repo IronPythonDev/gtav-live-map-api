@@ -17,7 +17,7 @@ namespace GTAVLiveMap.Core.Migrations
         public override void Up()
         {
             Alter.Table("Users")
-                .AddColumn("Roles").AsString().NotNullable().WithDefaultValue("User;");
+                .AddColumn("Roles").AsString().NotNullable().WithDefaultValue("User");
         }
     }
 }

@@ -17,8 +17,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"") VALUES(@Email);
-                                                SELECT * FROM public.""Users"" WHERE ""Email"" = @Email;", new { Email = obj.Email })).FirstOrDefault();
+            return (await db.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles);
+                                                SELECT * FROM public.""Users"" WHERE ""Email"" = @Email;", obj)).FirstOrDefault();
         }
 
         public void DeleteById(int id) =>
