@@ -40,6 +40,13 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             return (await db.QueryAsync<User>($"SELECT * FROM public.\"Users\" WHERE \"Id\" = {id};")).FirstOrDefault();
         }
 
+        public async Task<User> GetByEmail(string email)
+        {
+            var db = DbContext.GetConnection();
+
+            return (await db.QueryAsync<User>($"SELECT * FROM public.\"Users\" WHERE \"Email\" = @Email;" , new { Email = email })).FirstOrDefault();
+        }
+
         public void Update(User obj)
         {
             throw new NotImplementedException();
