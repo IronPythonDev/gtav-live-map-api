@@ -53,13 +53,18 @@ namespace GTAVLiveMap.Core.Infrastructure.Authorization
             if (sessionKeyObject == null)
                 return AuthenticateResult.Fail("Unauthorized");
 
+            var user = await UserRepository.GetById(sessionKeyObject.OwnerId);
+
+            if (user == null)
+                return AuthenticateResult.Fail("Unauthorized");
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier , $"{sessionKeyObject.OwnerId}")
             };
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new System.Security.Principal.GenericPrincipal(identity, null);
+            var principal = new System.Security.Principal.GenericPrincipal(identity, user.Roles.Split(';'));
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
             return AuthenticateResult.Success(ticket);
