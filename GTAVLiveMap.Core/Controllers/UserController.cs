@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GTAVLiveMap.Core.Controllers
 {
     [ApiController]
-    [Route("api/user")]
+    [Route("api/v1/user")]
     public class UserController : ControllerBase
     {
 
