@@ -2,6 +2,7 @@ using FluentMigrator.Runner;
 using GTAVLiveMap.Core.Hubs;
 using GTAVLiveMap.Core.Infrastructure.Contexts;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
+using GTAVLiveMap.Core.Infrastructure.Services;
 using GTAVLiveMap.Core.Migrations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,6 +47,8 @@ namespace GTAVLiveMap.Core
             services.AddSingleton<DbContext>();
             services.AddSingleton<IUserRepository , UserRepository>();
             services.AddSingleton<ISessionKeyRepository , SessionKeyRepository>();
+
+            services.AddSingleton<IGoogleService , GoogleService>();
 
             services.AddControllers();
             services.AddSignalR();

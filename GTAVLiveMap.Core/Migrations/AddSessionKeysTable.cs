@@ -20,7 +20,7 @@ namespace GTAVLiveMap.Core.Migrations
                 .WithColumn("UserAgent").AsString().Nullable().WithDefaultValue(null)
                 .WithColumn("CreatedIP").AsString().Nullable().WithDefaultValue(null)
                 .WithColumn("LastIP").AsString().Nullable().WithDefaultValue(null)
-                .WithColumn("OwnerId").AsInt32().ForeignKey("Users", "Id");
+                .WithColumn("OwnerId").AsInt32().ForeignKey("Users", "Id").OnDelete(System.Data.Rule.Cascade);
         }
     }
 }
