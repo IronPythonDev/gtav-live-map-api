@@ -1,5 +1,6 @@
 using FluentMigrator.Runner;
 using GTAVLiveMap.Core.Hubs;
+using GTAVLiveMap.Core.Infrastructure.Authorization;
 using GTAVLiveMap.Core.Infrastructure.Contexts;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Services;
@@ -50,6 +51,9 @@ namespace GTAVLiveMap.Core
 
             services.AddSingleton<IGoogleService , GoogleService>();
 
+            services.AddAuthentication("Basic")
+                .AddScheme<AuthenticationOptions, AuthenticationHandler>("Basic", null);
+
             services.AddControllers();
             services.AddSignalR();
         }
@@ -74,6 +78,7 @@ namespace GTAVLiveMap.Core
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

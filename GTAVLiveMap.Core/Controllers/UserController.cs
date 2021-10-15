@@ -2,12 +2,16 @@
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Services;
 using GTAVLiveMap.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v1/user")]
     public class UserController : ControllerBase
@@ -25,13 +29,10 @@ namespace GTAVLiveMap.Core.Controllers
         IGoogleService GoogleService { get; }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers([FromQuery] int limit = int.MaxValue , [FromQuery] int offset = 0) =>
-            Ok(await UserRepository.GetAll(limit, offset));
+        public async Task<IActionResult> GetUser() =>
+            Ok(await UserRepository.GetById(int.Parse(HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value)));
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetUser(int id) =>
-            Ok(await UserRepository.GetById(id));
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserDTO)
         {

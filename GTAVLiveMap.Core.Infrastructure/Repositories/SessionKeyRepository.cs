@@ -44,7 +44,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"Key\" = '@Key';" , new { Key = key })).FirstOrDefault();
+            return (await db.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"Key\" = @Key;" , new { Key = key })).FirstOrDefault();
         }
 
         public async Task<IList<SessionKey>> GetByOwnerId(int ownerId)
