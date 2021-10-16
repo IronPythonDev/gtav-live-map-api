@@ -49,6 +49,8 @@ namespace GTAVLiveMap.Core
             services.AddSingleton<IUserRepository , UserRepository>();
             services.AddSingleton<IMapRepository, MapRepository>();
             services.AddSingleton<ISessionKeyRepository , SessionKeyRepository>();
+            services.AddSingleton<IMapMemberRepository , MapMemberRepository>();
+            services.AddSingleton<IInviteRepository, InviteRepository>();
 
             services.AddSingleton<IGoogleService , GoogleService>();
 
