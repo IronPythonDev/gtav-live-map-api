@@ -1,5 +1,6 @@
 ﻿using FluentMigrator;
 using GTAVLiveMap.Domain.Enums;
+using System;
 
 namespace GTAVLiveMap.Core.Migrations
 {
@@ -22,7 +23,7 @@ namespace GTAVLiveMap.Core.Migrations
                     .Unique()
                 .WithColumn("Name")
                     .AsString()
-                    .WithDefaultValue(MapScopeNameEnum.All.ToString());
+                    .WithDefaultValue(string.Join(';' , Enum.GetNames(typeof(MapScopeNameEnum))));
         }
     }
 }

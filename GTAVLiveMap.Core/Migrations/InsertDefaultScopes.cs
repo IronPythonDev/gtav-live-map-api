@@ -16,7 +16,6 @@ namespace GTAVLiveMap.Core.Migrations
         public override void Up()
         {
             Insert.IntoTable(TABLE_NAME)
-                .Row(new { Name = MapScopeNameEnum.All.ToString() })
                 .Row(new { Name = MapScopeNameEnum.AddAction.ToString() })
                 .Row(new { Name = MapScopeNameEnum.EditAction.ToString() })
                 .Row(new { Name = MapScopeNameEnum.EmitAction.ToString() });
