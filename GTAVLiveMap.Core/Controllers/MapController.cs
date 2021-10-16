@@ -13,15 +13,24 @@ namespace GTAVLiveMap.Core.Controllers
     [Authorize]
     [Route("api/v1/map")]
     [ApiController]
-    public class MapController : ControllerBase
+    public partial class MapController : ControllerBase
     {
         public MapController(
-            IMapRepository mapRepository)
+            IMapRepository mapRepository,
+            IInviteRepository inviteRepository,
+            IUserRepository userRepository,
+            IMapMemberRepository mapMemberRepository)
         {
             MapRepository = mapRepository;
+            InviteRepository = inviteRepository;
+            UserRepository = userRepository;
+            MapMemberRepository = mapMemberRepository;
         }
 
         IMapRepository MapRepository { get; }
+        IUserRepository UserRepository { get; }
+        IInviteRepository InviteRepository { get; }
+        IMapMemberRepository MapMemberRepository { get; }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
