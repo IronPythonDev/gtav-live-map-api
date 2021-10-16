@@ -1,9 +1,11 @@
 ﻿using GTAVLiveMap.Core.DTOs.Requests;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
+using GTAVLiveMap.Core.Infrastructure.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Controllers
@@ -34,11 +36,15 @@ namespace GTAVLiveMap.Core.Controllers
                     OwnerId = createMapDTO.OwnerId
                 });
 
-                return Created($"api/v1/map/{map.Id}", map);
+                return Created(
+                    $"api/v1/map/{map.Id}",
+                    map);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError , 
+                    new Generic() { StatusCode = 500 , Errors = new List<Error> { new Error { Title = "Internal Server Error", Description = "Internal Server Error" } } });
             }
         }
     }

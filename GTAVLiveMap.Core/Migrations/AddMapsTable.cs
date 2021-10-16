@@ -37,7 +37,8 @@ namespace GTAVLiveMap.Core.Migrations
                     .WithDefaultValue(10)
                 .WithColumn("OwnerId")
                     .AsInt32()
-                    .ForeignKey("Users", "Id").OnDelete(System.Data.Rule.Cascade);
+                    .ForeignKey("Users", "Id")
+                    .OnDelete(System.Data.Rule.Cascade);
         }
     }
 }
