@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Infrastructure.Repositories
 {
-    public interface ISessionKeyRepository : IRepository<SessionKey>
+    public interface ISessionKeyRepository : IRepository<SessionKey , int>
     {
         Task<IList<SessionKey>> GetByOwnerId(int ownerId);
         Task<SessionKey> GetByKey(string key);

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Infrastructure.Repositories
 {
-    public interface IRepository<T>
+    public interface IRepository<T , TIdentity>
     {
         Task<T> Add(T obj);
-        void DeleteById(int id);
+        void DeleteById(TIdentity id);
         void Update(T obj);
-        Task<T> GetById(int id);
+        Task<T> GetById(TIdentity id);
         Task<IList<T>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue);
     }
 }

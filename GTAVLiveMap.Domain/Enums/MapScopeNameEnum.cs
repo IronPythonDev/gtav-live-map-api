@@ -2,9 +2,9 @@
 {
     public enum MapScopeNameEnum
     {
-        All,
         EditAction,
         EmitAction,
         AddAction,
+        CreateInvite
     }
 }

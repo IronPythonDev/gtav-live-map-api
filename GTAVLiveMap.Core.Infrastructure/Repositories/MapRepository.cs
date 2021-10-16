@@ -24,7 +24,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                                 SELECT * FROM public.""Maps"" WHERE ""ApiKey"" = @ApiKey;", obj)).FirstOrDefault();
         }
 
-        public void DeleteById(int id) =>
+        public void DeleteById(Guid id) =>
                 DbContext.Execute(@"DELETE FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id });
 
         public async Task<IList<Map>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
@@ -36,7 +36,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                 new { Limit = limit, Offset = offset })).ToList();
         }
 
-        public async Task<Map> GetById(int id)
+        public async Task<Map> GetById(Guid id)
         {
             var db = DbContext.GetConnection();
 
