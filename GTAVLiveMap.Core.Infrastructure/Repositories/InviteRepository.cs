@@ -32,13 +32,13 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                 new { Limit = limit, Offset = offset })).ToList();
         }
 
-        public async Task<IList<Invite>> GetByMapId(Guid id, int limit = int.MaxValue, int offset = 0)
+        public async Task<IList<Invite>> GetByMapId(Guid mapId, int limit = int.MaxValue, int offset = 0)
         {
             var db = DbContext.GetConnection();
 
             return (await db.QueryAsync<Invite>(
-                @"SELECT * FROM public.""Invites"" WHERE ""Id"" = @Id ORDER BY ""Id"" LIMIT @Limit OFFSET @Offset",
-                new { Limit = limit, Offset = offset, Id = id })).ToList();
+                @"SELECT * FROM public.""Invites"" WHERE ""MapId"" = @MapId ORDER BY ""Id"" LIMIT @Limit OFFSET @Offset",
+                new { Limit = limit, Offset = offset, MapId = mapId })).ToList();
         }
 
         public async Task<Invite> GetById(Guid id)
@@ -52,5 +52,17 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Invite> GetByKey(string key)
+        {
+            var db = DbContext.GetConnection();
+
+            return (await db.QueryAsync<Invite>(
+                @"SELECT * FROM public.""Invites"" WHERE ""Key"" = @Key;",
+                new { Key = key })).FirstOrDefault();
+        }
+
+        public void DeleteByKey(string key) =>
+            DbContext.Execute("DELETE FROM public.\"Invites\" WHERE \"Key\" = @Key;", new { Key = key });
     }
 }

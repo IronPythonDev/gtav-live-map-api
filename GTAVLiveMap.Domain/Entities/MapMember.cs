@@ -7,5 +7,6 @@ namespace GTAVLiveMap.Domain.Entities
         public string Scopes { get; set; }
         public Guid MapId { get; set; }
         public int OwnerId { get; set; }
+        public string InviteKey { get; set; }
     }
 }

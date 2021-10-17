@@ -21,8 +21,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             var db = DbContext.GetConnection();
 
             await db.ExecuteAsync(@"INSERT INTO public.""MapMembers""
-                                    (""MapId"", ""OwnerId"", ""Scopes"")
-                                    VALUES(@MapId , @OwnerId , @Scopes);", obj);
+                                    (""MapId"", ""OwnerId"", ""Scopes"" , ""InviteKey"")
+                                    VALUES(@MapId , @OwnerId , @Scopes , @InviteKey);", obj);
 
             return null;
         }
@@ -85,9 +85,13 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                 new { Limit = limit, Offset = offset , OwnerId = id})).ToList();
         }
 
-        public void Update(MapMember obj)
+        public async void Update(MapMember obj)
         {
-            throw new NotImplementedException();
+            var db = DbContext.GetConnection();
+
+            await db.ExecuteAsync(@"UPDATE public.""MapMembers""
+                                    SET ""Scopes"" = @Scopes
+                                    WHERE ""Id"" = @Id; ", obj);
         }
     }
 }

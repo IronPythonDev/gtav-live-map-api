@@ -59,6 +59,12 @@ namespace GTAVLiveMap.Core
 
             services.AddControllers();
             services.AddSignalR();
+            services.AddSwaggerDocument(c => c.PostProcess = d => 
+            {
+                d.Info.Version = "v1";
+                d.Info.Title = "GTAV-Live-Map API";
+                d.Info.Description = "A web API for gtavlivemap.com";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,6 +89,9 @@ namespace GTAVLiveMap.Core
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {
