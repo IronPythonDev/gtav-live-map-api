@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace GTAVLiveMap.Core.Controllers
 {
     [Authorize]
-    [Route("api/v1/map")]
+    [Route("v1/maps")]
     [ApiController]
     public partial class MapController : ControllerBase
     {

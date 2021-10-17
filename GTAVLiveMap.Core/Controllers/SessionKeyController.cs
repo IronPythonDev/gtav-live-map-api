@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Controllers
 {
-    [Route("api/v1/session-key")]
+    [Route("v1/session-keys")]
     [ApiController]
     public class SessionKeyController : ControllerBase
     {

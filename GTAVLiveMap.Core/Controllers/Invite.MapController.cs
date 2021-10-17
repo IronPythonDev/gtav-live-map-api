@@ -13,7 +13,7 @@ namespace GTAVLiveMap.Core.Controllers
 {
     public partial class MapController
     {
-        [HttpPost("{id}/invite")]
+        [HttpPost("{id}/invites")]
         public async Task<IActionResult> CreateInvite(string id , [FromBody] CreateInviteDTO createInviteDTO)
         {
             try

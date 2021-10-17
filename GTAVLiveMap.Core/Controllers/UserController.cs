@@ -13,7 +13,7 @@ namespace GTAVLiveMap.Core.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/v1/user")]
+    [Route("v1/users")]
     public class UserController : ControllerBase
     {
 
