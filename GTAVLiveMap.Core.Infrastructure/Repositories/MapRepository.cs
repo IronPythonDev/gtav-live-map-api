@@ -43,6 +43,18 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             return (await db.QueryAsync<Map>(@"SELECT * FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id })).FirstOrDefault();
         }
 
+        public async Task<IList<Map>> GetByUserId(int id, int limit = int.MaxValue, int offset = 0)
+        {
+            var db = DbContext.GetConnection();
+
+            return (await db.QueryAsync<Map>(
+                @"SELECT ""Maps"".* FROM public.""MapMembers""
+                  JOIN public.""Maps"" ON ""Maps"".""Id"" = ""MapMembers"".""MapId""
+                  WHERE ""MapMembers"".""OwnerId"" = @OwnerId
+                  ORDER BY ""Maps"".""Id"" OFFSET @Offset LIMIT @Limit;",
+                new { Limit = limit, Offset = offset , OwnerId = id})).ToList();
+        }
+
         public void Update(Map obj)
         {
             throw new NotImplementedException();

@@ -14,18 +14,24 @@ namespace GTAVLiveMap.Core.Controllers
     [Authorize]
     [ApiController]
     [Route("v1/users")]
-    public class UserController : ControllerBase
+    public partial class UserController : ControllerBase
     {
 
         public UserController(
             IUserRepository userRepository,
-            IGoogleService googleService)
+            IGoogleService googleService,
+            IMapRepository mapRepository,
+            IMapMemberRepository mapMemberRepository)
         {
             UserRepository = userRepository;
             GoogleService = googleService;
+            MapRepository = mapRepository;
+            MapMemberRepository = mapMemberRepository;
         }
 
         IUserRepository UserRepository { get; }
+        IMapRepository MapRepository { get; }
+        IMapMemberRepository MapMemberRepository { get; }
         IGoogleService GoogleService { get; }
 
         [HttpGet]

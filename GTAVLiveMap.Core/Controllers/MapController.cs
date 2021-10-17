@@ -50,12 +50,7 @@ namespace GTAVLiveMap.Core.Controllers
 
                 if (member == null) return NotFound("Member not found");
 
-                return Ok(new GetMapResponseDTO 
-                { 
-                    Map = map,
-                    Members = await MapMemberRepository.GetByMapId(map.Id),
-                    Invites = await InviteRepository.GetByMapId(map.Id)
-                });
+                return Ok(map);
             }
             catch (Exception)
             {
