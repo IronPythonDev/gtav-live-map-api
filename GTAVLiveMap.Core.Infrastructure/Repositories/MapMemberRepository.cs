@@ -67,13 +67,22 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                                      new { MapId = mapId, OwnerId = userId , Scopes = _scopes })).FirstOrDefault();
         }
 
-        public async Task<IList<MapMember>> GetByMapId(Guid id, int limit = int.MaxValue, int offset = int.MaxValue)
+        public async Task<IList<MapMember>> GetByMapId(Guid mapId, int limit = int.MaxValue, int offset = 0)
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<MapMember>(
-                $"SELECT * FROM public.\"MapMembers\" WHERE \"Id\" = @Id ORDER BY \"Id\" LIMIT @Limit OFFSET @Offset",
-                new { Limit = limit, Offset = offset , Id = id})).ToList();
+            return (await db.QueryAsync<MapMember , User , MapMember>(
+                @"SELECT * FROM public.""MapMembers"" 
+                  JOIN public.""Users"" ON ""Users"".""Id"" = ""MapMembers"".""OwnerId"" 
+                  WHERE ""MapId"" = @MapId 
+                  ORDER BY ""MapMembers"".""Id"" LIMIT @Limit OFFSET @Offset", 
+                (member , user) =>
+                {
+                    member.User = user;
+
+                    return member;
+                },
+                new { Limit = limit, Offset = offset , MapId = mapId})).ToList();
         }
 
         public async Task<IList<MapMember>> GetByUserId(int id, int limit = int.MaxValue, int offset = int.MaxValue)

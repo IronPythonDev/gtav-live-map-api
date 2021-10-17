@@ -1,4 +1,5 @@
 ﻿using GTAVLiveMap.Core.DTOs.Requests;
+using GTAVLiveMap.Core.DTOs.Responses;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Controllers
@@ -31,6 +34,34 @@ namespace GTAVLiveMap.Core.Controllers
         IUserRepository UserRepository { get; }
         IInviteRepository InviteRepository { get; }
         IMapMemberRepository MapMemberRepository { get; }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetMapById(string id)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                var member = await MapMemberRepository.GetByMapAndUserId(map.Id, userId);
+
+                if (member == null) return NotFound("Member not found");
+
+                return Ok(new GetMapResponseDTO 
+                { 
+                    Map = map,
+                    Members = await MapMemberRepository.GetByMapId(map.Id),
+                    Invites = await InviteRepository.GetByMapId(map.Id)
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
