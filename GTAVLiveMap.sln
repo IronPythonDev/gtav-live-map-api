@@ -7,9 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GTAVLiveMap.Core", "GTAVLiv
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{59BB8384-83CD-47D0-BC18-82E1E50D01E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTAVLiveMap.Core.Infrastructure", "GTAVLiveMap.Core.Infrastructure\GTAVLiveMap.Core.Infrastructure.csproj", "{465492BF-140C-4097-9107-345C45F2B02F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GTAVLiveMap.Core.Infrastructure", "GTAVLiveMap.Core.Infrastructure\GTAVLiveMap.Core.Infrastructure.csproj", "{465492BF-140C-4097-9107-345C45F2B02F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTAVLiveMap.Domain", "GTAVLiveMap.Domain\GTAVLiveMap.Domain.csproj", "{90635D0A-AD74-4772-8303-11DC3A895313}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GTAVLiveMap.Domain", "GTAVLiveMap.Domain\GTAVLiveMap.Domain.csproj", "{90635D0A-AD74-4772-8303-11DC3A895313}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{16601C87-9FF5-43A6-BFDF-55A5024BBB00}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -20,11 +20,20 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            await db.ExecuteAsync(@"INSERT INTO public.""MapMembers""
+            var members = await db.QueryAsync<MapMember, Map, MapMember>(@"INSERT INTO public.""MapMembers""
                                     (""MapId"", ""OwnerId"", ""Scopes"" , ""InviteKey"")
-                                    VALUES(@MapId , @OwnerId , @Scopes , @InviteKey);", obj);
+                                    VALUES(@MapId , @OwnerId , @Scopes , @InviteKey);
+                                    SELECT * FROM public.""MapMembers"" 
+                                    JOIN public.""Maps"" ON ""Maps"".""Id"" = @MapId
+                                    WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""OwnerId"" = @OwnerId;", 
+                                    (member , map) => 
+                                    {
+                                        member.Map = map;
 
-            return null;
+                                        return member;
+                                    } , obj);
+
+            return members.FirstOrDefault();
         }
 
         public void DeleteById(Guid id) =>
@@ -51,8 +60,15 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<MapMember>(@"SELECT * FROM public.""MapMembers"" 
-                                                     WHERE ""MapId"" = @MapId AND ""OwnerId"" = @OwnerId;", 
+            return (await db.QueryAsync<MapMember, Map, MapMember>(@"SELECT * FROM public.""MapMembers"" 
+                                                     JOIN public.""Maps"" ON ""Maps"".""Id"" = @MapId
+                                                     WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""OwnerId"" = @OwnerId;", 
+                                                     (member , map) =>
+                                                     {
+                                                         member.Map = map;
+
+                                                         return member;
+                                                     },
                                                      new { MapId = mapId , OwnerId = userId})).FirstOrDefault();
         }
 

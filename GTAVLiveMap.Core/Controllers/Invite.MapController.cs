@@ -140,10 +140,10 @@ namespace GTAVLiveMap.Core.Controllers
 
                     MapMemberRepository.Update(member);
 
-                    return NoContent();
+                    return Ok(member);
                 }
 
-                await MapMemberRepository.Add(new Domain.Entities.MapMember
+                member = await MapMemberRepository.Add(new Domain.Entities.MapMember
                 {
                     OwnerId = userId,
                     MapId = invite.MapId,
@@ -151,7 +151,7 @@ namespace GTAVLiveMap.Core.Controllers
                     InviteKey = invite.Key
                 });
 
-                return NoContent();
+                return Ok(member);
             }
             catch (Exception)
             {

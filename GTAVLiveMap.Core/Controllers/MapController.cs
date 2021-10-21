@@ -1,7 +1,9 @@
 ﻿using GTAVLiveMap.Core.DTOs.Requests;
 using GTAVLiveMap.Core.DTOs.Responses;
+using GTAVLiveMap.Core.Infrastructure;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Responses;
+using GTAVLiveMap.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +70,21 @@ namespace GTAVLiveMap.Core.Controllers
                 {
                     Name = createMapDTO.Name,
                     MaxMembers = createMapDTO.MaxMembers,
+                    OwnerId = createMapDTO.OwnerId
+                });
+
+                var inviteKey = await InviteRepository.Add(new Domain.Entities.Invite
+                {
+                    MapId = map.Id,
+                    Key = Generator.GetRandomString(6, true),
+                    Scopes = string.Join(';', Enum.GetNames(typeof(MapScopeNameEnum)))
+                });
+
+                await MapMemberRepository.Add(new Domain.Entities.MapMember
+                {
+                    Scopes = inviteKey.Scopes,
+                    InviteKey = inviteKey.Key,
+                    MapId = map.Id,
                     OwnerId = createMapDTO.OwnerId
                 });
 

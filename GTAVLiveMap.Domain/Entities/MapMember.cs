@@ -10,5 +10,6 @@ namespace GTAVLiveMap.Domain.Entities
         public string InviteKey { get; set; }
 
         public User User { get; set; }
+        public Map Map { get; set; }
     }
 }
