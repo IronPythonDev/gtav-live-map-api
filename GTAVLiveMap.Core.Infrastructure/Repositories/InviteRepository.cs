@@ -4,6 +4,7 @@ using GTAVLiveMap.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Infrastructure.Repositories
@@ -50,7 +51,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public void Update(Invite obj)
         {
-            throw new NotImplementedException();
+            DbContext.Execute(@"UPDATE public.""Invites"" SET ""Scopes"" = @Scopes WHERE ""Invites"".""Id"" = @Id;", obj);
         }
 
         public async Task<Invite> GetByKey(string key)
@@ -64,5 +65,27 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public void DeleteByKey(string key) =>
             DbContext.Execute("DELETE FROM public.\"Invites\" WHERE \"Key\" = @Key;", new { Key = key });
+
+        public async void UpdateMany(IList<Invite> invites)
+        {
+            var db = DbContext.GetConnection();
+
+            int index = 0;
+
+            var parameters = new DynamicParameters();
+            var sql = new StringBuilder();
+
+            foreach (var invite in invites)
+            {
+                sql.Append(@$"UPDATE public.""Invites"" SET ""Scopes"" = @Scopes{index} WHERE ""Invites"".""Id"" = @Id{index};");
+
+                parameters.Add($"@Scopes{index}" , invite.Scopes); 
+                parameters.Add($"@Id{index}" , invite.Id);
+
+                index++;
+            }
+
+            await db.ExecuteAsync(sql.ToString(), parameters);
+        }
     }
 }
