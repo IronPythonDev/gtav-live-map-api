@@ -1,5 +1,7 @@
 ﻿using GTAVLiveMap.Core.DTOs.Requests;
 using GTAVLiveMap.Core.Infrastructure;
+using GTAVLiveMap.Core.Infrastructure.DTOs.Requests;
+using GTAVLiveMap.Domain.Entities;
 using GTAVLiveMap.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -152,6 +154,33 @@ namespace GTAVLiveMap.Core.Controllers
                 });
 
                 return Ok(member);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Update invites
+        /// </summary>
+        /// <param name="id">Map Id</param>
+        /// <param name="invites"></param>
+        /// <returns></returns>
+        [HttpPut("{id}/invites")]
+        public async Task<IActionResult> UpdateInvites([FromRoute] string id, [FromBody] IList<UpdateInviteDTO> invites)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                InviteRepository.UpdateMany(Mapper.Map<IList<Invite>>(invites));
+
+                return NoContent();
             }
             catch (Exception)
             {

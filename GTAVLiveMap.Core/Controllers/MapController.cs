@@ -1,4 +1,5 @@
-﻿using GTAVLiveMap.Core.DTOs.Requests;
+﻿using AutoMapper;
+using GTAVLiveMap.Core.DTOs.Requests;
 using GTAVLiveMap.Core.DTOs.Responses;
 using GTAVLiveMap.Core.Infrastructure;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
@@ -24,18 +25,21 @@ namespace GTAVLiveMap.Core.Controllers
             IMapRepository mapRepository,
             IInviteRepository inviteRepository,
             IUserRepository userRepository,
-            IMapMemberRepository mapMemberRepository)
+            IMapMemberRepository mapMemberRepository,
+            IMapper mapper)
         {
             MapRepository = mapRepository;
             InviteRepository = inviteRepository;
             UserRepository = userRepository;
             MapMemberRepository = mapMemberRepository;
+            Mapper = mapper;
         }
 
         IMapRepository MapRepository { get; }
         IUserRepository UserRepository { get; }
         IInviteRepository InviteRepository { get; }
         IMapMemberRepository MapMemberRepository { get; }
+        IMapper Mapper { get; }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMapById(string id)
