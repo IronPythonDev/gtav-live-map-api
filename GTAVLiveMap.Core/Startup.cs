@@ -2,6 +2,8 @@ using FluentMigrator.Runner;
 using GTAVLiveMap.Core.Hubs;
 using GTAVLiveMap.Core.Infrastructure.Authorization;
 using GTAVLiveMap.Core.Infrastructure.Contexts;
+using GTAVLiveMap.Core.Infrastructure.Mapper;
+using GTAVLiveMap.Core.Infrastructure.Mapper.Base;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Services;
 using GTAVLiveMap.Core.Migrations;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core
@@ -56,6 +59,8 @@ namespace GTAVLiveMap.Core
 
             services.AddAuthentication("Basic")
                 .AddScheme<AuthenticationOptions, AuthenticationHandler>("Basic", null);
+
+            services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperConfigurationBase)));
 
             services.AddControllers();
             services.AddSignalR();
