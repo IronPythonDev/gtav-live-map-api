@@ -1,5 +1,6 @@
 ﻿using GTAVLiveMap.Core.DTOs.Requests;
 using GTAVLiveMap.Core.Infrastructure;
+using GTAVLiveMap.Core.Infrastructure.Attributes;
 using GTAVLiveMap.Core.Infrastructure.DTOs.Requests;
 using GTAVLiveMap.Domain.Entities;
 using GTAVLiveMap.Domain.Enums;
