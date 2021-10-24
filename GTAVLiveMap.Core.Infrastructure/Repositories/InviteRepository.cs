@@ -38,7 +38,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             var db = DbContext.GetConnection();
 
             return (await db.QueryAsync<Invite>(
-                @"SELECT * FROM public.""Invites"" WHERE ""MapId"" = @MapId ORDER BY ""Id"" LIMIT @Limit OFFSET @Offset",
+                @"SELECT * FROM public.""Invites"" WHERE ""MapId"" = @MapId LIMIT @Limit OFFSET @Offset",
                 new { Limit = limit, Offset = offset, MapId = mapId })).ToList();
         }
 
@@ -86,6 +86,11 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             }
 
             await db.ExecuteAsync(sql.ToString(), parameters);
+        }
+
+        public async Task<int> GetCount()
+        {
+            return (await GetAll(int.MaxValue , 0)).Count;
         }
     }
 }

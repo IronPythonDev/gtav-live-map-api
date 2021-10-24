@@ -5,6 +5,6 @@ namespace GTAVLiveMap.Core.DTOs.Requests
 {
     public class CreateInviteDTO
     {
-        public IList<MapScopeNameEnum> Scopes { get; set; }
+        public IList<string> Scopes { get; set; }
     }
 }

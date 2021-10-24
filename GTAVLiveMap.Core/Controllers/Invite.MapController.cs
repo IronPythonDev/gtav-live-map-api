@@ -39,6 +39,9 @@ namespace GTAVLiveMap.Core.Controllers
 
                 var invites = await InviteRepository.GetByMapId(map.Id, limit, offset);
 
+                Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Count");
+                Response.Headers.Add("X-Total-Count", $"{await InviteRepository.GetCount()}");
+
                 return Ok(invites);
             }
             catch (Exception)
@@ -101,7 +104,7 @@ namespace GTAVLiveMap.Core.Controllers
 
                 if (member == null) return NotFound("Member not found");
 
-                var scopes = string.Join(';', createInviteDTO.Scopes.Select(p => p.ToString()));
+                var scopes = string.Join(';', createInviteDTO.Scopes);
 
                 var invite = await InviteRepository.Add(new Domain.Entities.Invite
                 {

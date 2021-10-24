@@ -9,6 +9,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
     {
         Task<IList<Invite>> GetByMapId(Guid id, int limit = int.MaxValue, int offset = 0);
         Task<Invite> GetByKey(string key);
+        Task<int> GetCount(); 
         void DeleteByKey(string key);
         void UpdateMany(IList<Invite> invites);
     }
