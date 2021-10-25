@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GTAVLiveMap.Core.Infrastructure.Attributes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,31 @@ namespace GTAVLiveMap.Core.Controllers
             }
         }
 
+        [HttpGet("{id}/members")]
+        [Scopes("ViewMembers")]
+        public async Task<IActionResult> GetMapMembers(string id , [FromQuery] int limit = int.MaxValue, [FromQuery] int offset = 0)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                var members = await MapMemberRepository.GetByMapId(map.Id, limit , offset);
+
+                Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Count");
+                Response.Headers.Add("X-Total-Count", $"{await MapMemberRepository.GetCount()}");
+
+                return Ok(members);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{id}/member")]
         public async Task<IActionResult> LeaveFromMap(string id)
         {
@@ -45,6 +71,36 @@ namespace GTAVLiveMap.Core.Controllers
                 var member = await MapMemberRepository.GetByMapAndUserId(map.Id, userId);
 
                 if (member == null) return NotFound("Member not found");
+
+                MapMemberRepository.DeleteById(member.Id);
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete("{id}/member/{memberId}")]
+        [Scopes("DeleteMember")]
+        public async Task<IActionResult> LeaveFromMap(string id , string memberId)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                var member = await MapMemberRepository.GetByMapAndMemberId(map.Id , new Guid(memberId));
+
+                if (member == null) return NotFound("Member not found");
+
+                if (map.OwnerId == member.OwnerId) return BadRequest("You cannot remove the owner");
+
+                if (member.OwnerId == userId) return BadRequest("You cannot delete yourself");
 
                 MapMemberRepository.DeleteById(member.Id);
 

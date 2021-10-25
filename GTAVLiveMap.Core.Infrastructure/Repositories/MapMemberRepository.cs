@@ -118,5 +118,26 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                     SET ""Scopes"" = @Scopes
                                     WHERE ""Id"" = @Id; ", obj);
         }
+
+        public async Task<int> GetCount()
+        {
+            return (await GetAll(int.MaxValue, 0)).Count;
+        }
+
+        public async Task<MapMember> GetByMapAndMemberId(Guid mapId, Guid memberId)
+        {
+            var db = DbContext.GetConnection();
+
+            return (await db.QueryAsync<MapMember, User, MapMember>(@"SELECT * FROM public.""MapMembers"" 
+                                                     JOIN public.""Users"" ON ""Users"".""Id"" = ""MapMembers"".""OwnerId"" 
+                                                     WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""Id"" = @Id;",
+                                                     (member, user) =>
+                                                     {
+                                                         member.User = user;
+
+                                                         return member;
+                                                     },
+                                                     new { MapId = mapId, Id = memberId })).FirstOrDefault();
+        }
     }
 }
