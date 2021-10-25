@@ -24,6 +24,7 @@ namespace GTAVLiveMap.Core.Controllers
         /// <param name="offset">Offset</param>
         /// <returns></returns>
         [HttpGet("{id}/invites")]
+        [Scopes("ViewInvite")]
         public async Task<IActionResult> GetInvites([FromRoute] string id, [FromQuery] int limit = int.MaxValue, [FromQuery] int offset = 0)
         {
             try
@@ -58,6 +59,7 @@ namespace GTAVLiveMap.Core.Controllers
         /// <param name="key">Invite Key</param>
         /// <returns></returns>
         [HttpGet("{id}/invites/{key}")]
+        [Scopes("ViewInvites")]
         public async Task<IActionResult> GetInviteByKey([FromRoute] string id, [FromRoute] string key)
         {
             try
@@ -91,6 +93,7 @@ namespace GTAVLiveMap.Core.Controllers
         /// <param name="createInviteDTO">Invite Custom Params</param>
         /// <returns></returns>
         [HttpPost("{id}/invites")]
+        [Scopes("CreateInvite")]
         public async Task<IActionResult> CreateInvite(string id, [FromBody] CreateInviteDTO createInviteDTO)
         {
             try
@@ -172,6 +175,7 @@ namespace GTAVLiveMap.Core.Controllers
         /// <param name="invites"></param>
         /// <returns></returns>
         [HttpPut("{id}/invites")]
+        [Scopes("EditInvite")]
         public async Task<IActionResult> UpdateInvites([FromRoute] string id, [FromBody] IList<UpdateInviteDTO> invites)
         {
             try
@@ -199,6 +203,7 @@ namespace GTAVLiveMap.Core.Controllers
         /// <param name="key">Invite Key</param>
         /// <returns></returns>
         [HttpDelete("{id}/invites/{key}")]
+        [Scopes("DeleteInvite")]
         public async Task<IActionResult> DeleteInviteById([FromRoute] string id, [FromRoute] string key)
         {
             try

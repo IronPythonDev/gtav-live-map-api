@@ -10,6 +10,27 @@ namespace GTAVLiveMap.Core.Controllers
 {
     public partial class MapController
     {
+        [HttpGet("{id}/member")]
+        public async Task<IActionResult> GetMapMemberFromRequest(string id)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                var member = await MapMemberRepository.GetByMapAndUserId(map.Id, userId);
+
+                return Ok(member);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{id}/member")]
         public async Task<IActionResult> LeaveFromMap(string id)
         {

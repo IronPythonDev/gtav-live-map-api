@@ -57,6 +57,7 @@ namespace GTAVLiveMap.Core
             services.AddSingleton<ISessionKeyRepository, SessionKeyRepository>();
             services.AddSingleton<IMapMemberRepository, MapMemberRepository>();
             services.AddSingleton<IInviteRepository, InviteRepository>();
+            services.AddSingleton<IScopeRepository, ScopeRepository>();
 
             services.AddSingleton<IGoogleService, GoogleService>();
 
@@ -111,6 +112,12 @@ namespace GTAVLiveMap.Core
                 try
                 {
                     var endpoint = context.GetEndpoint();
+                        
+                    if (endpoint == null)
+                    {
+                        await next.Invoke(context);
+                        return;
+                    }
 
                     var controllerDescriptor = endpoint.Metadata.GetMetadata<ControllerActionDescriptor>();
 

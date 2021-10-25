@@ -26,12 +26,14 @@ namespace GTAVLiveMap.Core.Controllers
             IInviteRepository inviteRepository,
             IUserRepository userRepository,
             IMapMemberRepository mapMemberRepository,
+            IScopeRepository scopeRepository,
             IMapper mapper)
         {
             MapRepository = mapRepository;
             InviteRepository = inviteRepository;
             UserRepository = userRepository;
             MapMemberRepository = mapMemberRepository;
+            ScopeRepository = scopeRepository;
             Mapper = mapper;
         }
 
@@ -39,6 +41,7 @@ namespace GTAVLiveMap.Core.Controllers
         IUserRepository UserRepository { get; }
         IInviteRepository InviteRepository { get; }
         IMapMemberRepository MapMemberRepository { get; }
+        IScopeRepository ScopeRepository { get; }
         IMapper Mapper { get; }
 
         [HttpGet("{id}")]
