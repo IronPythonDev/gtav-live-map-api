@@ -4,6 +4,7 @@ using GTAVLiveMap.Core.DTOs.Responses;
 using GTAVLiveMap.Core.Infrastructure;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Responses;
+using GTAVLiveMap.Core.Infrastructure.Services;
 using GTAVLiveMap.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,7 @@ namespace GTAVLiveMap.Core.Controllers
             IUserRepository userRepository,
             IMapMemberRepository mapMemberRepository,
             IScopeRepository scopeRepository,
+            IUserUIService userUIService,
             IMapper mapper)
         {
             MapRepository = mapRepository;
@@ -34,6 +36,7 @@ namespace GTAVLiveMap.Core.Controllers
             UserRepository = userRepository;
             MapMemberRepository = mapMemberRepository;
             ScopeRepository = scopeRepository;
+            UserUIService = userUIService;
             Mapper = mapper;
         }
 
@@ -42,6 +45,7 @@ namespace GTAVLiveMap.Core.Controllers
         IInviteRepository InviteRepository { get; }
         IMapMemberRepository MapMemberRepository { get; }
         IScopeRepository ScopeRepository { get; }
+        IUserUIService UserUIService { get; }
         IMapper Mapper { get; }
 
         [HttpGet("{id}")]

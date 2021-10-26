@@ -60,6 +60,7 @@ namespace GTAVLiveMap.Core
             services.AddSingleton<IScopeRepository, ScopeRepository>();
 
             services.AddSingleton<IGoogleService, GoogleService>();
+            services.AddSingleton<IUserUIService, UserUIService>();
 
             services.AddAuthentication("Basic")
                 .AddScheme<AuthenticationOptions, AuthenticationHandler>("Basic", null);
