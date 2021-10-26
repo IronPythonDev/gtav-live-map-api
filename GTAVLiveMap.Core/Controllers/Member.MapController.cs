@@ -1,4 +1,6 @@
 ﻿using GTAVLiveMap.Core.Infrastructure.Attributes;
+using GTAVLiveMap.Core.Infrastructure.DTOs;
+using GTAVLiveMap.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -42,6 +44,30 @@ namespace GTAVLiveMap.Core.Controllers
                 Response.Headers.Add("X-Total-Count", $"{await MapMemberRepository.GetCount()}");
 
                 return Ok(members);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Update members
+        /// </summary>
+        /// <param name="id">Map Id</param>
+        /// <param name="invites"></param>
+        /// <returns></returns>
+        [HttpPut("{id}/members")]
+        [Scopes("EditMember")]
+        public async Task<IActionResult> UpdateMembers([FromRoute] string id, [FromBody] IList<UpdateMemberDTO> members)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                MapMemberRepository.UpdateMany(Mapper.Map<IList<MapMember>>(members));
+
+                return NoContent();
             }
             catch (Exception)
             {

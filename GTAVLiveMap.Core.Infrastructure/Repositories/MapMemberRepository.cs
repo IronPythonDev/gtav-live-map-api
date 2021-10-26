@@ -5,6 +5,7 @@ using GTAVLiveMap.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Infrastructure.Repositories
@@ -142,6 +143,28 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             await db.CloseAsync();
 
             return result;
+        }
+
+        public async void UpdateMany(IList<MapMember> members)
+        {
+            var db = DbContext.GetConnection();
+
+            int index = 0;
+
+            var parameters = new DynamicParameters();
+            var sql = new StringBuilder();
+
+            foreach (var member in members)
+            {
+                sql.Append(@$"UPDATE public.""MapMembers"" SET ""Scopes"" = @Scopes{index} WHERE ""MapMembers"".""Id"" = @Id{index};");
+
+                parameters.Add($"@Scopes{index}", member.Scopes);
+                parameters.Add($"@Id{index}", member.Id);
+
+                index++;
+            }
+
+            await db.ExecuteAsync(sql.ToString(), parameters);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public Task<MapMember> GetByMapAndUserId(Guid mapId , int userId);
         public Task<MapMember> GetByMapAndMemberId(Guid mapId , Guid memberId);
         public Task<MapMember> GetByMapIdAndUserIdAndScopes(Guid mapId, int userId, IList<MapScopeNameEnum> scopes);
+        public void UpdateMany(IList<MapMember> members);
         public Task<int> GetCount();
     }
 }
