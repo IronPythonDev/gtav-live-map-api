@@ -18,11 +18,7 @@ namespace GTAVLiveMap.Core.Controllers
             {
                 var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
 
-                var map = await MapRepository.GetById(new Guid(id));
-
-                if (map == null) return NotFound("Map not found");
-
-                var member = await MapMemberRepository.GetByMapAndUserId(map.Id, userId);
+                var member = await MapMemberRepository.GetByMapAndUserId(new Guid(id), userId);
 
                 return Ok(member);
             }
@@ -40,11 +36,7 @@ namespace GTAVLiveMap.Core.Controllers
             {
                 var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
 
-                var map = await MapRepository.GetById(new Guid(id));
-
-                if (map == null) return NotFound("Map not found");
-
-                var members = await MapMemberRepository.GetByMapId(map.Id, limit , offset);
+                var members = await MapMemberRepository.GetByMapId(new Guid(id), limit , offset);
 
                 Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Count");
                 Response.Headers.Add("X-Total-Count", $"{await MapMemberRepository.GetCount()}");

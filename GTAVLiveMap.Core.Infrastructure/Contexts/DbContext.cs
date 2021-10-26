@@ -63,8 +63,12 @@ namespace GTAVLiveMap.Core.Infrastructure.Contexts
         public async Task<int> ExecuteAsync(string sql, object param)
         {
             var connection = GetConnection();
+            
+            var result = await connection.ExecuteAsync(sql, param);
 
-            return await connection.ExecuteAsync(sql, param);
+            await connection.CloseAsync();
+
+            return result;
         }
 
         public NpgsqlConnection GetConnection(bool isUseDBNameFromConfig = true) =>
