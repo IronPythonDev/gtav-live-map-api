@@ -49,18 +49,22 @@ namespace GTAVLiveMap.Core.Infrastructure.Contexts
                 CreateDatabase(dbName);
         }
 
-        public async Task<IEnumerable<TReturn>> Query<TReturn>(string sql, object param)
+        public async Task<IEnumerable<TReturn>> QueryAsync<TReturn>(string sql, object param)
         {
             var connection = GetConnection();
+            
+            var result = await connection.QueryAsync<TReturn>(sql, param);
 
-            return await connection.QueryAsync<TReturn>(sql, param);
+            await connection.CloseAsync();
+
+            return result;
         }
 
-        public async void Execute(string sql, object param)
+        public async Task<int> ExecuteAsync(string sql, object param)
         {
             var connection = GetConnection();
 
-            await connection.ExecuteAsync(sql, param);
+            return await connection.ExecuteAsync(sql, param);
         }
 
         public NpgsqlConnection GetConnection(bool isUseDBNameFromConfig = true) =>

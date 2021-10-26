@@ -27,7 +27,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<MapScope>(@"SELECT ""Id"", ""Name"" FROM public.""MapScopes""; ")).ToList();
+            return (await DbContext.QueryAsync<MapScope>(@"SELECT ""Id"", ""Name"" FROM public.""MapScopes"";" , new { })).ToList();
         }
 
         public Task<MapScope> GetById(int id)

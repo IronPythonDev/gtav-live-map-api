@@ -21,8 +21,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                                 SELECT * FROM public.""Invites"" WHERE ""Key"" = @Key;", obj)).FirstOrDefault();
         }
 
-        public void DeleteById(Guid id) =>
-            DbContext.Execute("DELETE FROM public.\"Invites\" WHERE \"Id\" = @Id;", new { Id = id });
+        public async void DeleteById(Guid id) =>
+            await DbContext.ExecuteAsync("DELETE FROM public.\"Invites\" WHERE \"Id\" = @Id;", new { Id = id });
 
         public async Task<IList<Invite>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
         {
@@ -49,9 +49,9 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             return (await db.QueryAsync<Invite>($"SELECT * FROM public.\"Invites\" WHERE \"Id\" = @Id;", new { Id = id })).FirstOrDefault();
         }
 
-        public void Update(Invite obj)
+        public async void Update(Invite obj)
         {
-            DbContext.Execute(@"UPDATE public.""Invites"" SET ""Scopes"" = @Scopes WHERE ""Invites"".""Id"" = @Id;", obj);
+            await DbContext.ExecuteAsync(@"UPDATE public.""Invites"" SET ""Scopes"" = @Scopes WHERE ""Invites"".""Id"" = @Id;", obj);
         }
 
         public async Task<Invite> GetByKey(string key)
@@ -63,8 +63,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                 new { Key = key })).FirstOrDefault();
         }
 
-        public void DeleteByKey(string key) =>
-            DbContext.Execute("DELETE FROM public.\"Invites\" WHERE \"Key\" = @Key;", new { Key = key });
+        public async void DeleteByKey(string key) =>
+            await DbContext.ExecuteAsync("DELETE FROM public.\"Invites\" WHERE \"Key\" = @Key;", new { Key = key });
 
         public async void UpdateMany(IList<Invite> invites)
         {

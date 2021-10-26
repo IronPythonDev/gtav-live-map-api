@@ -18,8 +18,6 @@ namespace GTAVLiveMap.Core.Controllers
 
                 var map = await MapRepository.GetById(new Guid(id));
 
-                if (map == null) return NotFound("Map not found");
-
                 var member = await MapMemberRepository.GetByMapAndUserId(map.Id, userId);
 
                 var menu = await UserUIService.GetUserMenuByMemberIdAndMapId(userId, map.Id);

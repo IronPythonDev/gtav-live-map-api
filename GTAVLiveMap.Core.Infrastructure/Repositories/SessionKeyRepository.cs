@@ -18,20 +18,20 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<SessionKey>(@"INSERT INTO public.""SessionKeys""
+            return (await DbContext.QueryAsync<SessionKey>(@"INSERT INTO public.""SessionKeys""
                                 (""Key"" , ""CreatedIP"" , ""LastIP"" , ""UserAgent"" , ""OwnerId"") 
                                 VALUES(@Key , @CreatedIP , @LastIP , @UserAgent , @OwnerId);
                                 SELECT * FROM public.""SessionKeys"" WHERE ""Key"" = @Key;", obj)).FirstOrDefault();
         }
 
-        public void DeleteById(int id) =>
-            DbContext.Execute("DELETE FROM public.\"SessionKeys\" WHERE \"Id\" = @Id;", new { Id = id });
+        public async void DeleteById(int id) =>
+            await DbContext.ExecuteAsync("DELETE FROM public.\"SessionKeys\" WHERE \"Id\" = @Id;", new { Id = id });
 
         public async Task<IList<SessionKey>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<SessionKey>(
+            return (await DbContext.QueryAsync<SessionKey>(
                 $"SELECT * FROM public.\"SessionKeys\" ORDER BY \"OwnerId\" LIMIT @Limit OFFSET @Offset",
                 new { Limit = limit, Offset = offset })).ToList();
         }
@@ -44,14 +44,14 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"Key\" = @Key;" , new { Key = key })).FirstOrDefault();
+            return (await DbContext.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"Key\" = @Key;" , new { Key = key })).FirstOrDefault();
         }
 
         public async Task<IList<SessionKey>> GetByOwnerId(int ownerId)
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"OwnerId\" = '@OwnerId';", new { OwnerId = ownerId })).ToList();
+            return (await DbContext.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"OwnerId\" = '@OwnerId';", new { OwnerId = ownerId })).ToList();
         }
 
         public void Update(SessionKey obj)

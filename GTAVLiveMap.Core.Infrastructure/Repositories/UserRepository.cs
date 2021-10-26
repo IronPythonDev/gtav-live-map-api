@@ -15,36 +15,28 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<User> Add(User obj)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles);
+            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles);
                                                 SELECT * FROM public.""Users"" WHERE ""Email"" = @Email;", obj)).FirstOrDefault();
         }
 
-        public void DeleteById(int id) =>
-            DbContext.Execute("DELETE FROM public.\"Users\" WHERE \"Id\" = @Id;", new { Id = id });
+        public async void DeleteById(int id) =>
+            await DbContext.ExecuteAsync("DELETE FROM public.\"Users\" WHERE \"Id\" = @Id;", new { Id = id });
 
         public async Task<IList<User>> GetAll(int limit = int.MaxValue, int offset = 0)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<User>(
+            return (await DbContext.QueryAsync<User>(
                 $"SELECT * FROM public.\"Users\" ORDER BY \"Id\" LIMIT @Limit OFFSET @Offset",
                 new { Limit = limit, Offset = offset })).ToList();
         }
 
         public async Task<User> GetById(int id)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<User>($"SELECT * FROM public.\"Users\" WHERE \"Id\" = {id};")).FirstOrDefault();
+            return (await DbContext.QueryAsync<User>(@"SELECT * FROM public.""Users"" WHERE ""Id"" = @Id;" , new { Id = id })).FirstOrDefault();
         }
 
         public async Task<User> GetByEmail(string email)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<User>($"SELECT * FROM public.\"Users\" WHERE \"Email\" = @Email;" , new { Email = email })).FirstOrDefault();
+            return (await DbContext.QueryAsync<User>($"SELECT * FROM public.\"Users\" WHERE \"Email\" = @Email;" , new { Email = email })).FirstOrDefault();
         }
 
         public void Update(User obj)

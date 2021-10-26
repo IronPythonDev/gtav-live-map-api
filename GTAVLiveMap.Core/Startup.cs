@@ -83,6 +83,7 @@ namespace GTAVLiveMap.Core
             IWebHostEnvironment env,
             IMapMemberRepository memberRepository,
             IUserRepository userRepository,
+            IMapRepository mapRepository,
             ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
@@ -132,6 +133,15 @@ namespace GTAVLiveMap.Core
                     {
                         var routeData = context.GetRouteData();
                         var mapId = routeData.Values["id"];
+
+                        var map = await mapRepository.GetById(new Guid($"{mapId}"));
+
+                        if (map == null)
+                        {
+                            context.Response.StatusCode = 404;
+                            await context.Response.WriteAsync("Map not found");
+                            return;
+                        }
 
                         var member = await memberRepository.GetByMapAndUserId(Guid.Parse((string)mapId), userId);
 

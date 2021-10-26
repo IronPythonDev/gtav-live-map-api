@@ -25,34 +25,32 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                     VALUES(@MapId , @OwnerId , @Scopes , @InviteKey);
                                     SELECT * FROM public.""MapMembers"" 
                                     JOIN public.""Maps"" ON ""Maps"".""Id"" = @MapId
-                                    WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""OwnerId"" = @OwnerId;", 
-                                    (member , map) => 
+                                    WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""OwnerId"" = @OwnerId;",
+                                    (member, map) =>
                                     {
                                         member.Map = map;
 
                                         return member;
-                                    } , obj);
+                                    }, obj);
+
+            await db.CloseAsync();
 
             return members.FirstOrDefault();
         }
 
-        public void DeleteById(Guid id) =>
-                DbContext.Execute("DELETE FROM public.\"MapMembers\" WHERE \"Id\" = @Id;", new { Id = id });
+        public async void DeleteById(Guid id) =>
+                await DbContext.ExecuteAsync("DELETE FROM public.\"MapMembers\" WHERE \"Id\" = @Id;", new { Id = id });
 
         public async Task<IList<MapMember>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<MapMember>(
+            return (await DbContext.QueryAsync<MapMember>(
                 $"SELECT * FROM public.\"MapMembers\" ORDER BY \"Id\" LIMIT @Limit OFFSET @Offset",
                 new { Limit = limit, Offset = offset })).ToList();
         }
 
         public async Task<MapMember> GetById(Guid id)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<MapMember>($"SELECT * FROM public.\"MapMembers\" WHERE \"Id\" = @Id;", new { Id = id }))
+            return (await DbContext.QueryAsync<MapMember>($"SELECT * FROM public.\"MapMembers\" WHERE \"Id\" = @Id;", new { Id = id }))
                 .FirstOrDefault();
         }
         //
@@ -60,61 +58,63 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<MapMember, Map, MapMember>(@"SELECT * FROM public.""MapMembers"" 
+            var result = (await db.QueryAsync<MapMember, Map, MapMember>(@"SELECT * FROM public.""MapMembers"" 
                                                      JOIN public.""Maps"" ON ""Maps"".""Id"" = @MapId
-                                                     WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""OwnerId"" = @OwnerId;", 
-                                                     (member , map) =>
+                                                     WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""OwnerId"" = @OwnerId;",
+                                                     (member, map) =>
                                                      {
                                                          member.Map = map;
 
                                                          return member;
                                                      },
-                                                     new { MapId = mapId , OwnerId = userId})).FirstOrDefault();
+                                                     new { MapId = mapId, OwnerId = userId })).FirstOrDefault();
+
+            await db.CloseAsync();
+
+            return result;
         }
 
         public async Task<MapMember> GetByMapIdAndUserIdAndScopes(Guid mapId, int userId, IList<MapScopeNameEnum> scopes)
         {
-            var db = DbContext.GetConnection();
-
             var _scopes = string.Join(';', scopes.Select(p => p.ToString()));
 
-            return (await db.QueryAsync<MapMember>(@"SELECT * FROM public.""MapMembers"" 
+            return (await DbContext.QueryAsync<MapMember>(@"SELECT * FROM public.""MapMembers"" 
                                                      WHERE ""MapId"" = @MapId AND ""OwnerId"" = @OwnerId AND ""Scopes"" LIKE '%' || @Scopes || '%';",
-                                                     new { MapId = mapId, OwnerId = userId , Scopes = _scopes })).FirstOrDefault();
+                                                     new { MapId = mapId, OwnerId = userId, Scopes = _scopes })).FirstOrDefault();
         }
 
         public async Task<IList<MapMember>> GetByMapId(Guid mapId, int limit = int.MaxValue, int offset = 0)
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<MapMember , User , MapMember>(
+            var result = (await db.QueryAsync<MapMember, User, MapMember>(
                 @"SELECT * FROM public.""MapMembers"" 
                   JOIN public.""Users"" ON ""Users"".""Id"" = ""MapMembers"".""OwnerId"" 
                   WHERE ""MapId"" = @MapId 
-                  ORDER BY ""MapMembers"".""Id"" LIMIT @Limit OFFSET @Offset", 
-                (member , user) =>
+                  ORDER BY ""MapMembers"".""Id"" LIMIT @Limit OFFSET @Offset",
+                (member, user) =>
                 {
                     member.User = user;
 
                     return member;
                 },
-                new { Limit = limit, Offset = offset , MapId = mapId})).ToList();
+                new { Limit = limit, Offset = offset, MapId = mapId })).ToList();
+
+            await db.CloseAsync();
+
+            return result;
         }
 
         public async Task<IList<MapMember>> GetByUserId(int id, int limit = int.MaxValue, int offset = int.MaxValue)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<MapMember>(
+            return (await DbContext.QueryAsync<MapMember>(
                 @"SELECT * FROM public.""MapMembers"" WHERE ""OwnerId"" = @OwnerId ORDER BY ""Id"" LIMIT @Limit OFFSET @Offset",
-                new { Limit = limit, Offset = offset , OwnerId = id})).ToList();
+                new { Limit = limit, Offset = offset, OwnerId = id })).ToList();
         }
 
         public async void Update(MapMember obj)
         {
-            var db = DbContext.GetConnection();
-
-            await db.ExecuteAsync(@"UPDATE public.""MapMembers""
+            await DbContext.ExecuteAsync(@"UPDATE public.""MapMembers""
                                     SET ""Scopes"" = @Scopes
                                     WHERE ""Id"" = @Id; ", obj);
         }
@@ -128,7 +128,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var db = DbContext.GetConnection();
 
-            return (await db.QueryAsync<MapMember, User, MapMember>(@"SELECT * FROM public.""MapMembers"" 
+            var result = (await db.QueryAsync<MapMember, User, MapMember>(@"SELECT * FROM public.""MapMembers"" 
                                                      JOIN public.""Users"" ON ""Users"".""Id"" = ""MapMembers"".""OwnerId"" 
                                                      WHERE ""MapMembers"".""MapId"" = @MapId AND ""MapMembers"".""Id"" = @Id;",
                                                      (member, user) =>
@@ -138,6 +138,10 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                                          return member;
                                                      },
                                                      new { MapId = mapId, Id = memberId })).FirstOrDefault();
+
+            await db.CloseAsync();
+
+            return result;
         }
     }
 }

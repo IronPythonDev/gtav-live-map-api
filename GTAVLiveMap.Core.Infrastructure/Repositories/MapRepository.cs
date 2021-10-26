@@ -15,44 +15,36 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<Map> Add(Map obj)
         {
-            var db = DbContext.GetConnection();
-
             obj.ApiKey = Generator.GetRandomString(30);
 
-            return (await db.QueryAsync<Map>(@" INSERT INTO public.""Maps""(""Name"" , ""ApiKey"" , ""MaxMembers"" , ""OwnerId"") 
+            return (await DbContext.QueryAsync<Map>(@" INSERT INTO public.""Maps""(""Name"" , ""ApiKey"" , ""MaxMembers"" , ""OwnerId"") 
                                                 VALUES(@Name , @ApiKey , @MaxMembers , @OwnerId);
                                                 SELECT * FROM public.""Maps"" WHERE ""ApiKey"" = @ApiKey;", obj)).FirstOrDefault();
         }
 
-        public void DeleteById(Guid id) =>
-                DbContext.Execute(@"DELETE FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id });
+        public async void DeleteById(Guid id) =>
+                await DbContext.ExecuteAsync(@"DELETE FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id });
 
         public async Task<IList<Map>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<Map>(
+            return (await DbContext.QueryAsync<Map>(
                 @"SELECT * FROM public.""Maps"" ORDER BY ""Id"" LIMIT @Limit OFFSET @Offset",
                 new { Limit = limit, Offset = offset })).ToList();
         }
 
         public async Task<Map> GetById(Guid id)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<Map>(@"SELECT * FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id })).FirstOrDefault();
+            return (await DbContext.QueryAsync<Map>(@"SELECT * FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id })).FirstOrDefault();
         }
 
         public async Task<IList<Map>> GetByUserId(int id, int limit = int.MaxValue, int offset = 0)
         {
-            var db = DbContext.GetConnection();
-
-            return (await db.QueryAsync<Map>(
+            return (await DbContext.QueryAsync<Map>(
                 @"SELECT ""Maps"".* FROM public.""MapMembers""
                   JOIN public.""Maps"" ON ""Maps"".""Id"" = ""MapMembers"".""MapId""
                   WHERE ""MapMembers"".""OwnerId"" = @OwnerId
                   ORDER BY ""Maps"".""Id"" OFFSET @Offset LIMIT @Limit;",
-                new { Limit = limit, Offset = offset , OwnerId = id})).ToList();
+                new { Limit = limit, Offset = offset, OwnerId = id })).ToList();
         }
 
         public void Update(Map obj)
