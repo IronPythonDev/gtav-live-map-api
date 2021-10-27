@@ -32,6 +32,11 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                 new { Limit = limit, Offset = offset })).ToList();
         }
 
+        public async Task<Map> GetByApiKey(string key)
+        {
+            return (await DbContext.QueryAsync<Map>(@"SELECT * FROM public.""Maps"" WHERE ""ApiKey"" = @Key;", new { Key = key })).FirstOrDefault();
+        }
+
         public async Task<Map> GetById(Guid id)
         {
             return (await DbContext.QueryAsync<Map>(@"SELECT * FROM public.""Maps"" WHERE ""Id"" = @Id;", new { Id = id })).FirstOrDefault();

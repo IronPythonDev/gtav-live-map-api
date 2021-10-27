@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,6 +62,7 @@ namespace GTAVLiveMap.Core
 
             services.AddSingleton<IGoogleService, GoogleService>();
             services.AddSingleton<IUserUIService, UserUIService>();
+            services.AddSingleton<IMapApiKeyService, MapApiKeyService>();
 
             services.AddAuthentication("Basic")
                 .AddScheme<AuthenticationOptions, AuthenticationHandler>("Basic", null);
@@ -84,6 +86,7 @@ namespace GTAVLiveMap.Core
             IMapMemberRepository memberRepository,
             IUserRepository userRepository,
             IMapRepository mapRepository,
+            IMapApiKeyService mapApiKeyService,
             ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
@@ -113,6 +116,60 @@ namespace GTAVLiveMap.Core
             {
                 try
                 {
+                    if (!context.Request.Path.Value.Contains("ws"))
+                    {
+                        await next.Invoke(context);
+                        return;
+                    }
+
+                    var endpoint = context.GetEndpoint();
+
+                    if (endpoint == null)
+                    {
+                        await next.Invoke(context);
+                        return;
+                    }
+
+                    var hubMetadata = (HubMetadata) endpoint.Metadata.FirstOrDefault(p => p.GetType().IsEquivalentTo(typeof(HubMetadata)));
+
+                    if (hubMetadata == null)
+                    {
+                        await next.Invoke(context);
+                        return;
+                    }
+
+                    var hubType = hubMetadata.HubType;
+
+                    var atribute = hubType.GetCustomAttribute<MapApiKeyValidateAttribute>();
+
+                    if (atribute == null)
+                    {
+                        await next.Invoke(context);
+                        return;
+                    }
+
+                    var key = context.Request.Query["apiKey"].FirstOrDefault();
+                    
+                    if (!(await mapApiKeyService.IsValid($"{key}")))
+                    {
+                        await context.Response.WriteAsync("Invalid api key");
+                        await next.Invoke(context);
+                        return;
+                    }
+
+                    await next.Invoke(context);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"Failed validate map apiKey => {ex.GetType().Name}:{ex.Message}");
+                    await next.Invoke(context);
+                }
+            });
+
+            app.Use(next => async context =>
+            {
+                try
+                {
                     var endpoint = context.GetEndpoint();
                         
                     if (endpoint == null)
@@ -122,6 +179,12 @@ namespace GTAVLiveMap.Core
                     }
 
                     var controllerDescriptor = endpoint.Metadata.GetMetadata<ControllerActionDescriptor>();
+
+                    if (controllerDescriptor == null)
+                    {
+                        await next.Invoke(context);
+                        return;
+                    }
 
                     var controllerType = controllerDescriptor.ControllerTypeInfo;
 
