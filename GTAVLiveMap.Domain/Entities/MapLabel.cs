@@ -8,5 +8,7 @@ namespace GTAVLiveMap.Domain.Entities
         public string Coordinates { get; set; }
         public int Type { get; set; }
         public string PopupBody { get; set; }
+        public string CustomId { get; set; }
+        public string MetaData { get; set; }
     }
 }

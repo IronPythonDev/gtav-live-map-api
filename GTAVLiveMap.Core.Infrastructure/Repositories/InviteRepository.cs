@@ -15,8 +15,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<Invite> Add(Invite obj)
         {
-            return (await DbContext.QueryAsync<Invite>(@"INSERT INTO public.""Invites""(""Key"" , ""Scopes"" , ""MapId"") VALUES(@Key , @Scopes , @MapId);
-                                                SELECT * FROM public.""Invites"" WHERE ""Key"" = @Key;", obj)).FirstOrDefault();
+            return (await DbContext.QueryAsync<Invite>(@"INSERT INTO public.""Invites""(""Key"" , ""Scopes"" , ""MapId"") VALUES(@Key , @Scopes , @MapId) RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(Guid id) =>
@@ -80,9 +79,9 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             await db.ExecuteAsync(sql.ToString(), parameters);
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCountByMapId(Guid mapId)
         {
-            return (await GetAll(int.MaxValue , 0)).Count;
+            return (await GetByMapId(mapId , int.MaxValue , 0)).Count;
         }
     }
 }

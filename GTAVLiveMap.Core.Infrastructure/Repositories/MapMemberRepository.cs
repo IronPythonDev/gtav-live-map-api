@@ -120,9 +120,9 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                                     WHERE ""Id"" = @Id; ", obj);
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCountByMapId(Guid mapId)
         {
-            return (await GetAll(int.MaxValue, 0)).Count;
+            return (await GetByMapId(mapId , int.MaxValue, 0)).Count;
         }
 
         public async Task<MapMember> GetByMapAndMemberId(Guid mapId, Guid memberId)

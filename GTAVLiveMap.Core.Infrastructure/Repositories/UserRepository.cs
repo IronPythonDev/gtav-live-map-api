@@ -15,8 +15,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<User> Add(User obj)
         {
-            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles);
-                                                SELECT * FROM public.""Users"" WHERE ""Email"" = @Email;", obj)).FirstOrDefault();
+            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles) RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(int id) =>

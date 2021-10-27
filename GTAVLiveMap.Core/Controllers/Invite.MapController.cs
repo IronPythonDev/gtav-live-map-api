@@ -42,7 +42,7 @@ namespace GTAVLiveMap.Core.Controllers
                 var invites = await InviteRepository.GetByMapId(map.Id, limit, offset);
 
                 Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Count");
-                Response.Headers.Add("X-Total-Count", $"{await InviteRepository.GetCount()}");
+                Response.Headers.Add("X-Total-Count", $"{await InviteRepository.GetCountByMapId(map.Id)}");
 
                 return Ok(invites);
             }

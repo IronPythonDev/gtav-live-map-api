@@ -18,8 +18,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             obj.ApiKey = Generator.GetRandomString(30);
 
             return (await DbContext.QueryAsync<Map>(@" INSERT INTO public.""Maps""(""Name"" , ""ApiKey"" , ""MaxMembers"" , ""OwnerId"") 
-                                                VALUES(@Name , @ApiKey , @MaxMembers , @OwnerId);
-                                                SELECT * FROM public.""Maps"" WHERE ""ApiKey"" = @ApiKey;", obj)).FirstOrDefault();
+                                                VALUES(@Name , @ApiKey , @MaxMembers , @OwnerId)  
+                                                RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(Guid id) =>

@@ -20,8 +20,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
             return (await DbContext.QueryAsync<SessionKey>(@"INSERT INTO public.""SessionKeys""
                                 (""Key"" , ""CreatedIP"" , ""LastIP"" , ""UserAgent"" , ""OwnerId"") 
-                                VALUES(@Key , @CreatedIP , @LastIP , @UserAgent , @OwnerId);
-                                SELECT * FROM public.""SessionKeys"" WHERE ""Key"" = @Key;", obj)).FirstOrDefault();
+                                VALUES(@Key , @CreatedIP , @LastIP , @UserAgent , @OwnerId) 
+                                RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(int id) =>

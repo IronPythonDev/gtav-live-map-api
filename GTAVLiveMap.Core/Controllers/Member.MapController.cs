@@ -41,7 +41,7 @@ namespace GTAVLiveMap.Core.Controllers
                 var members = await MapMemberRepository.GetByMapId(new Guid(id), limit , offset);
 
                 Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Count");
-                Response.Headers.Add("X-Total-Count", $"{await MapMemberRepository.GetCount()}");
+                Response.Headers.Add("X-Total-Count", $"{await MapMemberRepository.GetCountByMapId(new Guid(id))}");
 
                 return Ok(members);
             }
