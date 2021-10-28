@@ -17,7 +17,10 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<MapLabel> Add(MapLabel obj)
         {
-            return (await DbContext.QueryAsync<MapLabel>(@" INSERT INTO public.""MapLabels""(""Coordinates"" , ""Type"" , ""PopupBody"" , ""MapId"" , ""MetaData"" , ""CustomId"") 
+            obj.CustomId = await GenerateCustomId(obj);
+
+            return (await DbContext.QueryAsync<MapLabel>(@" 
+                                                INSERT INTO public.""MapLabels""(""Coordinates"" , ""Type"" , ""PopupBody"" , ""MapId"" , ""MetaData"" , ""CustomId"") 
                                                 VALUES(@Coordinates , @Type , @PopupBody , @MapId , @MetaData , @CustomId)
                                                 RETURNING *;", obj)).FirstOrDefault();
         }
@@ -43,7 +46,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         }
 
         public async Task<MapLabel> GetByMapIdAndCustomId(Guid mapId, string customId) =>
-                    (await DbContext.QueryAsync<MapLabel>(@"SELECT * FROM public.""MapLabels"" WHERE ""MapId"" = @MapId AND ""CustomId"" = @CustomId;", new { MapId = mapId , CustomId = customId })).FirstOrDefault();
+                    (await DbContext.QueryAsync<MapLabel>(@"SELECT * FROM public.""MapLabels"" WHERE ""MapId"" = @MapId AND ""CustomId"" = @CustomId;", 
+                        new { MapId = mapId , CustomId = await GenerateCustomId(new MapLabel { MapId = mapId , CustomId = customId }) })).FirstOrDefault();
 
         public async Task<int> GetCountByMapId(Guid mapId) =>
             (await GetByMapId(mapId)).Count;
@@ -55,10 +59,18 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<MapLabel> UpdateByCustomId(MapLabel mapLabel)
         {
+            mapLabel.CustomId = await GenerateCustomId(mapLabel);
+
             return (await DbContext.QueryAsync<MapLabel>(@" UPDATE public.""MapLabels""
 	                                                        SET ""Coordinates"" = @Coordinates , ""Type"" = @Type, ""PopupBody"" = @PopupBody, ""MetaData""=@MetaData
 	                                                        WHERE ""CustomId"" = @CustomId
 	                                                        RETURNING *;", mapLabel)).FirstOrDefault();
         }
+
+        public Task<string> GenerateCustomId(MapLabel mapLabel) =>
+            Task.FromResult($"{mapLabel.MapId}:{mapLabel.CustomId}");
+
+        public Task<string> GetCustomId(MapLabel mapLabel) =>
+            Task.FromResult(mapLabel.CustomId.Split(';').Last());
     }
 }

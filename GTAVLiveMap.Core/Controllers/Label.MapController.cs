@@ -60,5 +60,30 @@ namespace GTAVLiveMap.Core.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpDelete("{id}/label/{labelCustomId}")]
+        public async Task<IActionResult> DeleteMapLabel(string id, string labelCustomId)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                var label = await MapLabelRepository.GetByMapIdAndCustomId(map.Id , labelCustomId);
+
+                if (label == null) return NotFound("Label not found");
+
+                MapLabelRepository.DeleteById(label.Id);
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

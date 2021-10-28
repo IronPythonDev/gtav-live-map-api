@@ -16,14 +16,17 @@ namespace GTAVLiveMap.Core.Hubs
         public MapHub(
             IMapLabelService mapLabelService,
             IConnectionRepository connectionRepository,
-            IMapRepository mapRepository)
+            IMapRepository mapRepository,
+            IMapLabelRepository mapLabelRepository)
         {
             MapLabelService = mapLabelService;
             ConnectionRepository = connectionRepository;
             MapRepository = mapRepository;
+            MapLabelRepository = mapLabelRepository;
         }
 
         IMapLabelService MapLabelService { get; }
+        IMapLabelRepository MapLabelRepository { get; }
         IConnectionRepository ConnectionRepository { get; }
         IMapRepository MapRepository { get; }
 
@@ -54,11 +57,7 @@ namespace GTAVLiveMap.Core.Hubs
 
             var map = await MapRepository.GetByApiKey(apiKey);
 
-            if (map == null)
-            {
-                Context.Abort();
-                return;
-            }
+            if (map == null) return;
 
             var connection = await ConnectionRepository.GetByConnectionId(Context.ConnectionId);
 
@@ -67,9 +66,26 @@ namespace GTAVLiveMap.Core.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task UpdateMarker(object position)
+        public async Task DeleteObject(string customId)
         {
-            await Clients.All.SendAsync("OnUpdateMarker", position);
+            try
+            {
+                var connection = await ConnectionRepository.GetByConnectionId(Context.ConnectionId);
+
+                if (connection == null) return;
+
+                var label = await MapLabelRepository.GetByMapIdAndCustomId(connection.MapId, customId);
+
+                if (label == null) return;
+
+                MapLabelRepository.DeleteById(label.Id);
+
+                await Clients.Clients((await ConnectionRepository.GetByMapId(connection.MapId)).Select(v => v.ConnectionId)).SendAsync("DeleteLabel", label);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+            }
         }
 
         public async Task CreateOrUpdateObject(MapLabelDTO mapLabelDTO)

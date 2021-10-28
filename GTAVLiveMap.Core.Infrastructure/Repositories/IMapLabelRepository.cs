@@ -11,5 +11,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public Task<MapLabel> GetByMapIdAndCustomId(Guid mapId , string customId);
         public Task<int> GetCountByMapId(Guid mapId);
         public Task<MapLabel> UpdateByCustomId(MapLabel mapLabel);
+        public Task<string> GenerateCustomId(MapLabel mapLabel);
+        public Task<string> GetCustomId(MapLabel mapLabel);
     }
 }
