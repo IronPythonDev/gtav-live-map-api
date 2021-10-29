@@ -45,7 +45,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             var label = (await DbContext.QueryAsync<MapLabel>(@"SELECT * FROM public.""MapLabels"" WHERE ""Id"" = @Id;", new { Id = id })).FirstOrDefault();
 
-            label.CustomId = await GetCustomId(label);
+            if (label != null) label.CustomId = await GetCustomId(label);
 
             return label;
         }
@@ -68,7 +68,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             var label = (await DbContext.QueryAsync<MapLabel>(@"SELECT * FROM public.""MapLabels"" WHERE ""MapId"" = @MapId AND ""CustomId"" = @CustomId;",
                         new { MapId = mapId, CustomId = await GenerateCustomId(new MapLabel { MapId = mapId, CustomId = customId }) })).FirstOrDefault();
 
-            label.CustomId = await GetCustomId(label);
+            if (label != null) label.CustomId = await GetCustomId(label);
 
             return label;
         }
