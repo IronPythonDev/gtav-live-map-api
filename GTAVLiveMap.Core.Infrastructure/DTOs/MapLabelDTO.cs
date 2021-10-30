@@ -7,7 +7,7 @@ namespace GTAVLiveMap.Core.Infrastructure.DTOs
         public Guid Id { get; set; }
         public Guid MapId { get; set; }
         public object Coordinates { get; set; }
-        public Vector2 Vector2 { get; set; }
+        public Vector3 Vector2 { get; set; }
         public int Type { get; set; }
         public string PopupBody { get; set; }
         public string CustomId { get; set; }

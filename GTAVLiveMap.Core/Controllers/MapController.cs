@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GTAVLiveMap.Core.DTOs.Requests;
 using GTAVLiveMap.Core.DTOs.Responses;
+using GTAVLiveMap.Core.Hubs;
 using GTAVLiveMap.Core.Infrastructure;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using GTAVLiveMap.Core.Infrastructure.Responses;
@@ -9,6 +10,7 @@ using GTAVLiveMap.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +32,9 @@ namespace GTAVLiveMap.Core.Controllers
             IScopeRepository scopeRepository,
             IUserUIService userUIService,
             IMapLabelRepository mapLabelRepository,
+            IConnectionRepository connectionRepository,
+            IMapActionsRepository mapActionsRepository,
+            IHubContext<MapHub> mapHubContext,
             IMapper mapper)
         {
             MapRepository = mapRepository;
@@ -39,6 +44,9 @@ namespace GTAVLiveMap.Core.Controllers
             ScopeRepository = scopeRepository;
             UserUIService = userUIService;
             MapLabelRepository = mapLabelRepository;
+            ConnectionRepository = connectionRepository;
+            MapActionsRepository = mapActionsRepository;
+            MapHubContext = mapHubContext;
             Mapper = mapper;
         }
 
@@ -49,7 +57,11 @@ namespace GTAVLiveMap.Core.Controllers
         IScopeRepository ScopeRepository { get; }
         IMapLabelRepository MapLabelRepository { get; }
         IUserUIService UserUIService { get; }
+        IMapActionsRepository MapActionsRepository { get; }
+        IHubContext<MapHub> MapHubContext { get; }
+        IConnectionRepository ConnectionRepository { get; }
         IMapper Mapper { get; }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMapById(string id)

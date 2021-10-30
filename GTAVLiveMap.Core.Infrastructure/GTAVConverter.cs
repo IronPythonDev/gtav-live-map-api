@@ -12,10 +12,11 @@ namespace GTAVLiveMap.Core.Infrastructure
         public double lng { get; set; }
     }
 
-    public class Vector2
+    public class Vector3
     {
         public double x { get; set; }
         public double y { get; set; }
+        public double z { get; set; }
     }
 
     public static class GTAVConverter
@@ -23,7 +24,7 @@ namespace GTAVLiveMap.Core.Infrastructure
         public static double MapCenterX = 3753;
         public static double MapCenterY = 5527;
 
-        public static LatLng GetLatLngFromVector2(Vector2 vector)
+        public static LatLng GetLatLngFromVector2(Vector3 vector)
         {
             double x = (vector.x / 1.515) * -1;
             double y = vector.y / 1.52;
