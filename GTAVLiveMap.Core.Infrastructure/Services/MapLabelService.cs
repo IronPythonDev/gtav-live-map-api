@@ -29,6 +29,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Services
             if (label == null) label = await MapLabelRepository.Add(Mapper.Map<MapLabel>(mapLabelDTO));
             else label = await MapLabelRepository.UpdateByCustomId(Mapper.Map<MapLabel>(mapLabelDTO));
 
+            label.CustomId = await MapLabelRepository.GetCustomId(label);
+
             return Mapper.Map<MapLabelDTO>(label);
         }
     }
