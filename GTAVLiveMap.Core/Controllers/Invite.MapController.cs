@@ -104,6 +104,12 @@ namespace GTAVLiveMap.Core.Controllers
 
                 if (map == null) return NotFound("Map not found");
 
+                var mapConfig = await MapConfigRepository.GetById(map.Id);
+
+                var inviteCount = await InviteRepository.GetCountByMapId(map.Id);
+
+                if (inviteCount >= mapConfig.MaxInvites) return BadRequest("The limit of available Invites for your map has been exceeded");
+
                 var member = await MapMemberRepository.GetByMapIdAndUserIdAndScopes(map.Id, userId, new List<MapScopeNameEnum> { MapScopeNameEnum.CreateInvite });
 
                 if (member == null) return NotFound("Member not found");
@@ -151,6 +157,12 @@ namespace GTAVLiveMap.Core.Controllers
 
                     return Ok(member);
                 }
+
+                var mapConfig = await MapConfigRepository.GetById(invite.MapId);
+
+                var memberCount = await MapMemberRepository.GetCountByMapId(invite.MapId);
+
+                if (memberCount >= mapConfig.MaxMembers) return BadRequest("The card is full");
 
                 member = await MapMemberRepository.Add(new Domain.Entities.MapMember
                 {

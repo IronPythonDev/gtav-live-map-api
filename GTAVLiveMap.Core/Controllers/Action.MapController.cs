@@ -60,6 +60,12 @@ namespace GTAVLiveMap.Core.Controllers
 
                 if (map == null) return NotFound("Map not found");
 
+                var mapConfig = await MapConfigRepository.GetById(map.Id);
+
+                var actionCount = await MapActionsRepository.GetCountByMapId(map.Id);
+
+                if (actionCount >= mapConfig.MaxActions) return BadRequest("The limit of available Actions for your Map has been exceeded");
+
                 var action = await MapActionsRepository.GetByMapIdAndName(map.Id, createInviteDTO.Name);
 
                 if (action != null) return BadRequest("This action already exists");
