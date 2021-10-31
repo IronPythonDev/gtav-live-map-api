@@ -2,8 +2,10 @@
 
 namespace GTAVLiveMap.Core.Infrastructure.DTOs
 {
-    public class CreateMapActionDTO
+    public class MapActionDTO
     {
+        public Guid Id { get; set; }
+        public Guid MapId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }

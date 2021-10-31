@@ -9,5 +9,7 @@ namespace GTAVLiveMap.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public int MaxMembers { get; set; }
         public int OwnerId { get; set; }
+
+        public MapConfig Config { get; set; }
     }
 }

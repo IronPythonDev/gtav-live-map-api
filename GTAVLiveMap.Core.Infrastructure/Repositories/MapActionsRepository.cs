@@ -41,6 +41,13 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
                 new { Limit = limit, Offset = offset , MapId = id })).ToList();
         }
 
+        public async Task<MapAction> GetByMapIdAndActionId(Guid id, Guid actionId)
+        {
+            return (await DbContext.QueryAsync<MapAction>(
+                @"SELECT * FROM public.""MapActions"" WHERE ""MapId"" = @MapId AND ""Id"" = @ActionId;",
+                new { ActionId = actionId , MapId = id })).FirstOrDefault();
+        }
+
         public async Task<MapAction> GetByMapIdAndName(Guid id, string name)
         {
             return (await DbContext.QueryAsync<MapAction>(
@@ -51,9 +58,11 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public async Task<int> GetCountByMapId(Guid mapId) =>
             (await GetByMapId(mapId)).Count;
 
-        public void Update(MapAction obj)
+        public async void Update(MapAction obj)
         {
-            throw new NotImplementedException();
+            await DbContext.QueryAsync<MapAction>(@"UPDATE public.""MapActions""
+                                                    SET ""Name"" = @Name , ""Description"" = @Description
+                                                    WHERE ""Id"" = @Id; ", obj);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GTAVLiveMap.Core.Infrastructure.Attributes;
 using GTAVLiveMap.Core.Infrastructure.DTOs;
+using GTAVLiveMap.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -49,7 +50,7 @@ namespace GTAVLiveMap.Core.Controllers
         /// <returns></returns>
         [HttpPost("{id}/actions")]
         [Scopes("AddAction")]
-        public async Task<IActionResult> CreateAction(string id, [FromBody] CreateMapActionDTO createInviteDTO)
+        public async Task<IActionResult> CreateAction(string id, [FromBody] MapActionDTO createInviteDTO)
         {
             try
             {
@@ -71,6 +72,44 @@ namespace GTAVLiveMap.Core.Controllers
                 });
 
                 return Created($"map/{id}/actions/{action.Id}", action);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Update Action for Map
+        /// </summary>
+        /// <param name="id">Map Id</param>
+        /// <param name="CreateMapActionDTO">Action Custom Params</param>
+        /// <returns></returns>
+        [HttpPut("{id}/action/{actionId}")]
+        [Scopes("EditAction")]
+        public async Task<IActionResult> UpdateAction(string id, string actionId , [FromBody] MapActionDTO mapActionDTO)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+
+                var map = await MapRepository.GetById(new Guid(id));
+
+                if (map == null) return NotFound("Map not found");
+
+                var action = await MapActionsRepository.GetByMapIdAndActionId(new Guid(id) , new Guid(actionId));
+
+                if (action == null) return BadRequest("Action not found");
+
+                var actionByName = await MapActionsRepository.GetByMapIdAndName(new Guid(id), mapActionDTO.Name);
+
+                if (actionByName != null && actionByName.Id != action.Id) return BadRequest("This action already exists");
+
+                mapActionDTO.Id = action.Id;
+
+                MapActionsRepository.Update(Mapper.Map<MapAction>(mapActionDTO));
+
+                return NoContent();
             }
             catch (Exception)
             {

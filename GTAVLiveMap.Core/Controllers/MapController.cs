@@ -35,6 +35,7 @@ namespace GTAVLiveMap.Core.Controllers
             IConnectionRepository connectionRepository,
             IMapActionsRepository mapActionsRepository,
             IHubContext<MapHub> mapHubContext,
+            IMapConfigRepository mapConfigRepository,
             IMapper mapper)
         {
             MapRepository = mapRepository;
@@ -47,6 +48,7 @@ namespace GTAVLiveMap.Core.Controllers
             ConnectionRepository = connectionRepository;
             MapActionsRepository = mapActionsRepository;
             MapHubContext = mapHubContext;
+            MapConfigRepository = mapConfigRepository;
             Mapper = mapper;
         }
 
@@ -60,6 +62,7 @@ namespace GTAVLiveMap.Core.Controllers
         IMapActionsRepository MapActionsRepository { get; }
         IHubContext<MapHub> MapHubContext { get; }
         IConnectionRepository ConnectionRepository { get; }
+        IMapConfigRepository MapConfigRepository { get; }
         IMapper Mapper { get; }
 
 
@@ -77,6 +80,8 @@ namespace GTAVLiveMap.Core.Controllers
                 var member = await MapMemberRepository.GetByMapAndUserId(map.Id, userId);
 
                 if (member == null) return NotFound("Member not found");
+
+                map.Config = await MapConfigRepository.GetById(map.Id);
 
                 return Ok(map);
             }
@@ -112,6 +117,11 @@ namespace GTAVLiveMap.Core.Controllers
                     InviteKey = inviteKey.Key,
                     MapId = map.Id,
                     OwnerId = createMapDTO.OwnerId
+                });
+
+                await MapConfigRepository.Add(new Domain.Entities.MapConfig
+                {
+                    MapId = map.Id
                 });
 
                 return Created(

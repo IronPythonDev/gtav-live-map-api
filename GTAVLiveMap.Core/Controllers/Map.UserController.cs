@@ -25,6 +25,11 @@ namespace GTAVLiveMap.Core.Controllers
 
                 var maps = await MapRepository.GetByUserId(userId);
 
+                foreach (var map in maps)
+                {
+                    map.Config = await MapConfigRepository.GetById(map.Id);
+                }
+
                 return Ok(maps);
             }
             catch (Exception)

@@ -16,8 +16,6 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<SessionKey> Add(SessionKey obj)
         {
-            var db = DbContext.GetConnection();
-
             return (await DbContext.QueryAsync<SessionKey>(@"INSERT INTO public.""SessionKeys""
                                 (""Key"" , ""CreatedIP"" , ""LastIP"" , ""UserAgent"" , ""OwnerId"") 
                                 VALUES(@Key , @CreatedIP , @LastIP , @UserAgent , @OwnerId) 
@@ -29,8 +27,6 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<IList<SessionKey>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
         {
-            var db = DbContext.GetConnection();
-
             return (await DbContext.QueryAsync<SessionKey>(
                 $"SELECT * FROM public.\"SessionKeys\" ORDER BY \"OwnerId\" LIMIT @Limit OFFSET @Offset",
                 new { Limit = limit, Offset = offset })).ToList();
@@ -42,15 +38,11 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<SessionKey> GetByKey(string key)
         {
-            var db = DbContext.GetConnection();
-
             return (await DbContext.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"Key\" = @Key;" , new { Key = key })).FirstOrDefault();
         }
 
         public async Task<IList<SessionKey>> GetByOwnerId(int ownerId)
         {
-            var db = DbContext.GetConnection();
-
             return (await DbContext.QueryAsync<SessionKey>($"SELECT * FROM public.\"SessionKeys\" WHERE \"OwnerId\" = '@OwnerId';", new { OwnerId = ownerId })).ToList();
         }
 

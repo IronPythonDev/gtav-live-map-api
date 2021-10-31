@@ -21,11 +21,13 @@ namespace GTAVLiveMap.Core.Controllers
             IUserRepository userRepository,
             IGoogleService googleService,
             IMapRepository mapRepository,
+            IMapConfigRepository mapConfigRepository,
             IMapMemberRepository mapMemberRepository)
         {
             UserRepository = userRepository;
             GoogleService = googleService;
             MapRepository = mapRepository;
+            MapConfigRepository = mapConfigRepository;
             MapMemberRepository = mapMemberRepository;
         }
 
@@ -33,6 +35,7 @@ namespace GTAVLiveMap.Core.Controllers
         IMapRepository MapRepository { get; }
         IMapMemberRepository MapMemberRepository { get; }
         IGoogleService GoogleService { get; }
+        IMapConfigRepository MapConfigRepository { get; }
 
         [HttpGet]
         public async Task<IActionResult> GetUser() =>
