@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GTAVLiveMap.Domain.Enums;
+using System;
 
 namespace GTAVLiveMap.Core.Infrastructure.DTOs
 {
@@ -9,6 +10,7 @@ namespace GTAVLiveMap.Core.Infrastructure.DTOs
         public object Coordinates { get; set; }
         public Vector3 Vector2 { get; set; }
         public int Type { get; set; }
+        public string Icon { get; set; } 
         public string PopupBody { get; set; }
         public string CustomId { get; set; }
         public object MetaData { get; set; } = null;

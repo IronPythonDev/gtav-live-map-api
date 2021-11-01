@@ -20,8 +20,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             obj.CustomId = await GenerateCustomId(obj);
 
             return (await DbContext.QueryAsync<MapLabel>(@" 
-                                                INSERT INTO public.""MapLabels""(""Coordinates"" , ""Type"" , ""PopupBody"" , ""MapId"" , ""MetaData"" , ""CustomId"" , ""Vector3"") 
-                                                VALUES(@Coordinates , @Type , @PopupBody , @MapId , @MetaData , @CustomId , @Vector3)
+                                                INSERT INTO public.""MapLabels""(""Coordinates"" , ""Type"" , ""PopupBody"" , ""MapId"" , ""MetaData"" , ""CustomId"" , ""Vector3"" , ""Icon"") 
+                                                VALUES(@Coordinates , @Type , @PopupBody , @MapId , @MetaData , @CustomId , @Vector3 , @Icon)
                                                 RETURNING *;", obj)).FirstOrDefault();
         }
 
@@ -86,7 +86,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
             mapLabel.CustomId = await GenerateCustomId(mapLabel);
 
             return (await DbContext.QueryAsync<MapLabel>(@" UPDATE public.""MapLabels""
-	                                                        SET ""Coordinates"" = @Coordinates , ""Type"" = @Type, ""PopupBody"" = @PopupBody, ""MetaData""=@MetaData , ""Vector3"" = @Vector3
+	                                                        SET ""Coordinates"" = @Coordinates , ""Type"" = @Type, ""PopupBody"" = @PopupBody, ""MetaData""=@MetaData , ""Vector3"" = @Vector3 , ""Icon"" = @Icon
 	                                                        WHERE ""CustomId"" = @CustomId
 	                                                        RETURNING *;", mapLabel)).FirstOrDefault();
         }

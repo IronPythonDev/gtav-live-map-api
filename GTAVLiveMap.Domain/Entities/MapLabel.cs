@@ -9,6 +9,7 @@ namespace GTAVLiveMap.Domain.Entities
         public string Vector3 { get; set; }
         public int Type { get; set; }
         public string PopupBody { get; set; }
+        public string Icon { get; set; } = "marker";
         public string CustomId { get; set; }
         public string MetaData { get; set; }
     }
