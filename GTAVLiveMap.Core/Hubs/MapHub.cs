@@ -51,6 +51,8 @@ namespace GTAVLiveMap.Core.Hubs
                 MapId = map.Id
             });
 
+            await Clients.Caller.SendAsync("OnConnected");
+
             await base.OnConnectedAsync();
         }
 
