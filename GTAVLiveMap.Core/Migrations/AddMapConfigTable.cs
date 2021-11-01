@@ -28,7 +28,7 @@ namespace GTAVLiveMap.Core.Migrations
                 .WithColumn("MaxMembers")
                     .AsInt32()
                     .WithDefaultValue(10)
-                .WithColumn("MaxLabels")
+                .WithColumn("MaxObjects")
                     .AsInt32()
                     .WithDefaultValue(100);
         }

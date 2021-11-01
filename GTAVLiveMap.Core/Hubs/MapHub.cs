@@ -17,11 +17,13 @@ namespace GTAVLiveMap.Core.Hubs
             IMapLabelService mapLabelService,
             IConnectionRepository connectionRepository,
             IMapRepository mapRepository,
+            IMapConfigRepository mapConfigRepository,
             IMapLabelRepository mapLabelRepository)
         {
             MapLabelService = mapLabelService;
             ConnectionRepository = connectionRepository;
             MapRepository = mapRepository;
+            MapConfigRepository = mapConfigRepository;
             MapLabelRepository = mapLabelRepository;
         }
 
@@ -29,6 +31,7 @@ namespace GTAVLiveMap.Core.Hubs
         IMapLabelRepository MapLabelRepository { get; }
         IConnectionRepository ConnectionRepository { get; }
         IMapRepository MapRepository { get; }
+        IMapConfigRepository MapConfigRepository { get; }
 
         public override async Task OnConnectedAsync()
         {
@@ -95,6 +98,21 @@ namespace GTAVLiveMap.Core.Hubs
                 var connection = await ConnectionRepository.GetByConnectionId(Context.ConnectionId);
 
                 if (connection == null) return;
+
+                var mapConfig = await MapConfigRepository.GetById(connection.MapId);
+
+                var objectCount = await MapLabelRepository.GetCountByMapId(connection.MapId);
+
+                if (objectCount >= mapConfig.MaxObjects)
+                {
+                    await Clients.Caller.SendAsync("Error", new
+                    {
+                        Type = 1,
+                        Msg = "The limit of available Objects for your Map has been exceeded"
+                    });
+
+                    return;
+                }
 
                 mapLabelDTO.MapId = connection.MapId;
 

@@ -18,8 +18,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public async Task<MapConfig> Add(MapConfig obj)
         {
             return (await DbContext.QueryAsync<MapConfig>(@"INSERT INTO public.""MapConfigs""
-                                (""MapId"" , ""MaxInvites"" , ""MaxMembers"" , ""MaxLabels"" , ""MaxActions"") 
-                                VALUES(@MapId , @MaxInvites , @MaxMembers , @MaxLabels , @MaxActions) 
+                                (""MapId"" , ""MaxInvites"" , ""MaxMembers"" , ""MaxObjects"" , ""MaxActions"") 
+                                VALUES(@MapId , @MaxInvites , @MaxMembers , @MaxObjects , @MaxActions) 
                                 RETURNING *;", obj)).FirstOrDefault();
         }
 
@@ -42,7 +42,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public async void Update(MapConfig obj)
         {
             await DbContext.ExecuteAsync(@"UPDATE public.""MapConfigs""
-                                           SET ""MaxInvites"" = @MaxInvites, ""MaxMembers"" = @MaxMembers, ""MaxLabels"" = @MaxLabels , ""MaxActions"" = @MaxActions
+                                           SET ""MaxInvites"" = @MaxInvites, ""MaxMembers"" = @MaxMembers, ""MaxObjects"" = @MaxObjects , ""MaxActions"" = @MaxActions
                                            WHERE ""MapId"" = @MapId; ", obj);
         }
     }

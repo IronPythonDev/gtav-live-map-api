@@ -28,7 +28,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Services
 
                 return payload;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

@@ -12,8 +12,8 @@ namespace GTAVLiveMap.Core.Controllers
 {
     public partial class MapController
     {
-        [HttpGet("{id}/labels")]
-        public async Task<IActionResult> GetMapLabels(string id, [FromQuery] int limit = int.MaxValue, [FromQuery] int offset = 0)
+        [HttpGet("{id}/objects")]
+        public async Task<IActionResult> GetMapObjects(string id, [FromQuery] int limit = int.MaxValue, [FromQuery] int offset = 0)
         {
             try
             {
@@ -61,8 +61,8 @@ namespace GTAVLiveMap.Core.Controllers
         //    }
         //}
 
-        [HttpDelete("{id}/label/{labelCustomId}")]
-        public async Task<IActionResult> DeleteMapLabel(string id, string labelCustomId)
+        [HttpDelete("{id}/object/{objectCustomId}")]
+        public async Task<IActionResult> DeleteMapObject(string id, string objectCustomId)
         {
             try
             {
@@ -72,9 +72,9 @@ namespace GTAVLiveMap.Core.Controllers
 
                 if (map == null) return NotFound("Map not found");
 
-                var label = await MapLabelRepository.GetByMapIdAndCustomId(map.Id , labelCustomId);
+                var label = await MapLabelRepository.GetByMapIdAndCustomId(map.Id , objectCustomId);
 
-                if (label == null) return NotFound("Label not found");
+                if (label == null) return NotFound("Object not found");
 
                 MapLabelRepository.DeleteById(label.Id);
 
