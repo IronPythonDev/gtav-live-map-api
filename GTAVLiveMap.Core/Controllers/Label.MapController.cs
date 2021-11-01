@@ -38,28 +38,28 @@ namespace GTAVLiveMap.Core.Controllers
             }
         }
 
-        [HttpPost("{id}/labels")]
-        public async Task<IActionResult> CreateMapLabel(string id, [FromBody] MapLabelDTO mapLabelDTO)
-        {
-            try
-            {
-                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+        //[HttpPost("{id}/labels")]
+        //public async Task<IActionResult> CreateMapLabel(string id, [FromBody] MapLabelDTO mapLabelDTO)
+        //{
+        //    try
+        //    {
+        //        var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
 
-                var map = await MapRepository.GetById(new Guid(id));
+        //        var map = await MapRepository.GetById(new Guid(id));
 
-                if (map == null) return NotFound("Map not found");
+        //        if (map == null) return NotFound("Map not found");
 
-                var labelDTO = Mapper.Map<MapLabel>(mapLabelDTO, c => c.AfterMap((src, dest) => dest.MapId = map.Id));
+        //        var labelDTO = Mapper.Map<MapLabel>(mapLabelDTO, c => c.AfterMap((src, dest) => dest.MapId = map.Id));
 
-                var label = await MapLabelRepository.Add(labelDTO);
+        //        var label = await MapLabelRepository.Add(labelDTO);
 
-                return Ok(Mapper.Map<MapLabelDTO>(label));
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
+        //        return Ok(Mapper.Map<MapLabelDTO>(label));
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError);
+        //    }
+        //}
 
         [HttpDelete("{id}/label/{labelCustomId}")]
         public async Task<IActionResult> DeleteMapLabel(string id, string labelCustomId)
