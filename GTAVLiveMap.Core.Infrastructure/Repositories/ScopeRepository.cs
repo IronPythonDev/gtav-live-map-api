@@ -25,8 +25,6 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<IList<MapScope>> GetAll(int limit = int.MaxValue, int offset = int.MaxValue)
         {
-            var db = DbContext.GetConnection();
-
             return (await DbContext.QueryAsync<MapScope>(@"SELECT ""Id"", ""Name"" FROM public.""MapScopes"";" , new { })).ToList();
         }
 

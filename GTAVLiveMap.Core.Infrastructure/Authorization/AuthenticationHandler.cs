@@ -24,17 +24,27 @@ namespace GTAVLiveMap.Core.Infrastructure.Authorization
             UrlEncoder encoder,
             ISystemClock clock,
             IUserRepository userRepository,
-            ISessionKeyRepository sessionKeyRepository) : base(options , logger , encoder , clock)
+            IScopeRepository scopeRepository,
+            ISessionKeyRepository sessionKeyRepository) : base(options, logger, encoder, clock)
         {
             UserRepository = userRepository;
+            ScopeRepository = scopeRepository;
             SessionKeyRepository = sessionKeyRepository;
         }
 
         IUserRepository UserRepository { get; }
+        IScopeRepository ScopeRepository { get; }
         ISessionKeyRepository SessionKeyRepository { get; }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var apiKey = Request.Headers["ApiKey"].ToString();
+
+            if (!string.IsNullOrEmpty(apiKey) )
+            {
+                return await GetAuthenticateAsync();
+            }
+
             if (!Request.Headers.ContainsKey(HEADER_KEY))
                 return AuthenticateResult.Fail("Unauthorized");
 
@@ -44,6 +54,19 @@ namespace GTAVLiveMap.Core.Infrastructure.Authorization
                 return AuthenticateResult.NoResult();
 
             return await ValidateSessionKey(authorizationHeader);
+        }
+
+        private async Task<AuthenticateResult> GetAuthenticateAsync()
+        {
+            var roles = (await ScopeRepository.GetAll(int.MaxValue, 0)).Select(v => v.Name).ToArray();
+
+            var claims = new List<Claim> { };
+
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var principal = new System.Security.Principal.GenericPrincipal(identity, roles);
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+            return AuthenticateResult.Success(ticket);
         }
 
         private async Task<AuthenticateResult> ValidateSessionKey(string sessionKey)

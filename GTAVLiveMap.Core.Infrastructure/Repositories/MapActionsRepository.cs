@@ -17,8 +17,8 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         //MapActions
         public async Task<MapAction> Add(MapAction obj)
         {
-            return (await DbContext.QueryAsync<MapAction>(@"INSERT INTO public.""MapActions""(""Name"" , ""MapId"" , ""Description"") 
-                                                             VALUES(@Name , @MapId  , @Description) RETURNING *;", obj)).FirstOrDefault();
+            return (await DbContext.QueryAsync<MapAction>(@"INSERT INTO public.""MapActions""(""Name"" , ""MapId"" , ""Description"" , ""Source"") 
+                                                             VALUES(@Name , @MapId  , @Description , @Source) RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(Guid id) =>
@@ -61,7 +61,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public async void Update(MapAction obj)
         {
             await DbContext.QueryAsync<MapAction>(@"UPDATE public.""MapActions""
-                                                    SET ""Name"" = @Name , ""Description"" = @Description
+                                                    SET ""Name"" = @Name , ""Description"" = @Description , ""Source"" = @Source
                                                     WHERE ""Id"" = @Id; ", obj);
         }
     }

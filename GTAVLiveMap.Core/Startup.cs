@@ -196,18 +196,26 @@ namespace GTAVLiveMap.Core
                     var actionType = controllerType.GetMethod(controllerDescriptor.ActionName);
 
                     var atribute = actionType.GetCustomAttribute<ScopesAttribute>();
+                    var allowApiKeyAtribute = actionType.GetCustomAttribute<AllowApiKeyAttribute>();
 
-                    if (int.TryParse(context.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value, out int userId))
+                    if (int.TryParse(context.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)?.Value, out int userId))
                     {
                         var routeData = context.GetRouteData();
-                        var mapId = routeData.Values["id"];
+                        var mapId = routeData.Values["id"]?.ToString();
+                        var apiKey = context.Request.Headers["ApiKey"].ToString();
 
-                        var map = await mapRepository.GetById(new Guid($"{mapId}"));
+                        var map = string.IsNullOrEmpty(apiKey) && (string.IsNullOrEmpty(apiKey) || allowApiKeyAtribute == null) ? await mapRepository.GetById(new Guid(mapId)) : await mapRepository.GetByApiKey(apiKey);
 
                         if (map == null)
                         {
                             context.Response.StatusCode = 404;
                             await context.Response.WriteAsync("Map not found");
+                            return;
+                        }
+
+                        if (!string.IsNullOrEmpty(apiKey) && allowApiKeyAtribute != null)
+                        {
+                            await next.Invoke(context);
                             return;
                         }
 

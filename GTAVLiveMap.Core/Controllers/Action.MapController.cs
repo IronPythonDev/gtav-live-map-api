@@ -34,6 +34,11 @@ namespace GTAVLiveMap.Core.Controllers
                 Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Count");
                 Response.Headers.Add("X-Total-Count", $"{await MapActionsRepository.GetCountByMapId(new Guid(id))}");
 
+                foreach (var action in actions)
+                {
+                    action.Source = null;
+                }
+
                 return Ok(actions);
             }
             catch (Exception)
@@ -49,14 +54,15 @@ namespace GTAVLiveMap.Core.Controllers
         /// <param name="CreateMapActionDTO">Action Custom Params</param>
         /// <returns></returns>
         [HttpPost("{id}/actions")]
+        [AllowApiKey]
         [Scopes("AddAction")]
         public async Task<IActionResult> CreateAction(string id, [FromBody] MapActionDTO createInviteDTO)
         {
             try
             {
-                var userId = int.Parse(User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value);
+                var apiKey = Request.Headers["ApiKey"].ToString();
 
-                var map = await MapRepository.GetById(new Guid(id));
+                var map = string.IsNullOrEmpty(apiKey) ? await MapRepository.GetById(new Guid(id)) : await MapRepository.GetByApiKey(apiKey);
 
                 if (map == null) return NotFound("Map not found");
 
@@ -74,6 +80,7 @@ namespace GTAVLiveMap.Core.Controllers
                 { 
                     MapId = map.Id,
                     Name = createInviteDTO.Name,
+                    Source = createInviteDTO.Source,
                     Description = createInviteDTO.Description
                 });
 
