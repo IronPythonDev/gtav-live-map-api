@@ -14,6 +14,7 @@ RUN dotnet build "GTAVLiveMap.Core/GTAVLiveMap.Core.csproj" -c Release -o /app/b
 
 FROM build AS publish
 RUN dotnet publish "GTAVLiveMap.Core/GTAVLiveMap.Core.csproj" -c Release -o /app/publish
+RUN dotnet dev-certs https --trust
 
 FROM base AS final
 WORKDIR /app
