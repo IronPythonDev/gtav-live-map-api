@@ -5,6 +5,7 @@ using GTAVLiveMap.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -22,12 +23,14 @@ namespace GTAVLiveMap.Core.Controllers
             IGoogleService googleService,
             IMapRepository mapRepository,
             IMapConfigRepository mapConfigRepository,
+            ILogger<UserController> logger,
             IMapMemberRepository mapMemberRepository)
         {
             UserRepository = userRepository;
             GoogleService = googleService;
             MapRepository = mapRepository;
             MapConfigRepository = mapConfigRepository;
+            Logger = logger;
             MapMemberRepository = mapMemberRepository;
         }
 
@@ -36,6 +39,7 @@ namespace GTAVLiveMap.Core.Controllers
         IMapMemberRepository MapMemberRepository { get; }
         IGoogleService GoogleService { get; }
         IMapConfigRepository MapConfigRepository { get; }
+        ILogger<UserController> Logger { get; }
 
         [HttpGet]
         public async Task<IActionResult> GetUser() =>
@@ -51,7 +55,7 @@ namespace GTAVLiveMap.Core.Controllers
 
                 var GoogleUser = await GoogleService.GetUserFromJWT(createUserDTO.JWT);
 
-                if (GoogleUser == null) 
+                if (GoogleUser == null)
                     return BadRequest();
 
                 if ((await UserRepository.GetByEmail(GoogleUser.Email)) != null)
@@ -61,12 +65,23 @@ namespace GTAVLiveMap.Core.Controllers
 
                 return Created($"api/user/{user.Id}", user.Id);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                Logger.LogError($"Exception Type: {ex.GetType().Name}");
+                Logger.LogError($"Exception StackTrace: {ex.StackTrace}");
+
+                if (ex.InnerException != null)
+                {
+                    var innerException = ex.InnerException;
+
+                    Logger.LogError($"Exception Type: {innerException.GetType().Name}");
+                    Logger.LogError($"Exception StackTrace: {innerException.StackTrace}");
+                }
+
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-         
+
         [HttpDelete("{id:int}")]
         public IActionResult DeleteUser(int id)
         {
