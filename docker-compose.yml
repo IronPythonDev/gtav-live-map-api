@@ -13,6 +13,8 @@ services:
       - 'postgres'
     networks:
       - gtavlivemap-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
   nginx:
     image: nginx:alpine
     container_name: nginx
