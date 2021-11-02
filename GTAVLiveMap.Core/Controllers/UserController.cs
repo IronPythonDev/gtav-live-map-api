@@ -56,10 +56,12 @@ namespace GTAVLiveMap.Core.Controllers
                 var GoogleUser = await GoogleService.GetUserFromJWT(createUserDTO.JWT);
 
                 if (GoogleUser == null)
-                    return BadRequest();
+                    return BadRequest("Google user is not found");
 
                 if ((await UserRepository.GetByEmail(GoogleUser.Email)) != null)
-                    return BadRequest();
+                    return BadRequest("User is already exist");
+
+                Logger.LogInformation($"Create user -> Email: {GoogleUser.Email}");
 
                 User user = await UserRepository.Add(new Domain.Entities.User { Email = GoogleUser.Email });
 
