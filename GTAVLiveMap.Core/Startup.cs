@@ -96,15 +96,6 @@ namespace GTAVLiveMap.Core
             IMapApiKeyService mapApiKeyService,
             ILogger<Startup> logger)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
             app.UseCors("CorsPolicy");
 
             app.UseStaticFiles();
