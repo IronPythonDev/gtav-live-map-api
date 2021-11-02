@@ -5,7 +5,7 @@ services:
     container_name: 'gtav-live-map-api'
     image: ${DOCKER_REGISTRY-}gtavlivemapcore
     build:
-      context: GTAVLiveMap.Core
+      context: .
       dockerfile: Dockerfile
     ports:
       - '8090:80'
@@ -36,6 +36,7 @@ services:
       - POSTGRES_PASSWORD=mypass
     volumes:
       - 'gtavlivemap-postgresql-volume:/var/lib/postgresql/data'
+      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
     image: 'postgres:10.4'
     networks:
       - gtavlivemap-network

@@ -48,6 +48,7 @@ namespace GTAVLiveMap.Core
             services
                 .AddFluentMigratorCore()
                 .ConfigureRunner(c => c
+                    
                     .AddPostgres11_0()
                     .WithGlobalConnectionString(Configuration.GetConnectionString("PostgreSQLDocker") + $"Database={Configuration["PostgreConfig:DataBaseName"]}")
                     .ScanIn(typeof(InitDataBase).Assembly).For.Migrations())
