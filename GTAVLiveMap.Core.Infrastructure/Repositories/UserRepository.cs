@@ -1,10 +1,8 @@
-﻿using Dapper;
-using GTAVLiveMap.Core.Infrastructure.Contexts;
+﻿using GTAVLiveMap.Core.Infrastructure.Contexts;
 using GTAVLiveMap.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GTAVLiveMap.Core.Infrastructure.Repositories
