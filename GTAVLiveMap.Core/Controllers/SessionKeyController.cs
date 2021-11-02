@@ -32,12 +32,12 @@ namespace GTAVLiveMap.Core.Controllers
             var GoogleUser = await GoogleService.GetUserFromJWT(generateSessionKeyDTO.JWT);
 
             if (GoogleUser == null)
-                return BadRequest();
+                return BadRequest("Invalid JWT Token");
 
             var user = await UserRepository.GetByEmail(GoogleUser.Email);
 
             if (user == null) 
-                return BadRequest();
+                return BadRequest("User Not Found");
 
             var IP = HttpContext?.Connection?.RemoteIpAddress?.ToString();
 
