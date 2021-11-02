@@ -32,6 +32,7 @@ namespace GTAVLiveMap.Core
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    
                     webBuilder.UseStartup<Startup>();
                 });
 
