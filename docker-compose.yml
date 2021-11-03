@@ -15,21 +15,21 @@ services:
       - gtavlivemap-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    restart: unless-stopped
-    tty: true
-    volumes:
-      - ./:/var/www
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - gtavlivemap-network
-    links:
-      - 'gtavlivemap.core'
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: nginx
+  #   restart: unless-stopped
+  #   tty: true
+  #   volumes:
+  #     - ./:/var/www
+  #     - ./nginx/conf.d/:/etc/nginx/conf.d/
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   networks:
+  #     - gtavlivemap-network
+  #   links:
+  #     - 'gtavlivemap.core'
   postgres:
     ports:
       - '5432:5432'
