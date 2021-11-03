@@ -5,8 +5,8 @@ services:
     container_name: 'gtav-live-map-api'
     image: ${DOCKER_REGISTRY-}gtavlivemapcore
     build:
-      context: GTAVLiveMap.Core
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: GTAVLiveMap.Core/Dockerfile
     ports:
       - '8090:80'
     depends_on:
