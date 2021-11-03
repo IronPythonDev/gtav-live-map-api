@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY [".", "."]
+COPY ["../", "."]
 RUN dotnet restore "GTAVLiveMap.Core/GTAVLiveMap.Core.csproj"
 COPY . .
 RUN dotnet build "GTAVLiveMap.Core/GTAVLiveMap.Core.csproj" -c Release -o /app/build
