@@ -18,7 +18,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Schema;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
@@ -114,6 +116,56 @@ namespace GTAVLiveMap.Core
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
+
+            app.Use(next => async context =>
+            {
+                try
+                {
+                    var currentDitectory = Directory.GetCurrentDirectory();
+
+                    var logsDirectoryName = "logs";
+                    var pathToLogsFile = currentDitectory + "/" + logsDirectoryName + "/requests.txt";
+
+                    if (!Directory.Exists(logsDirectoryName))
+                         Directory.CreateDirectory(logsDirectoryName);
+
+                    using var bodyReader = new StreamReader(context.Request.Body);
+
+                    object bodyObject = null;
+
+                    var body = await bodyReader.ReadToEndAsync();
+
+                    bodyReader.Close();
+
+                    try
+                    {
+                        bodyObject = Newtonsoft.Json.JsonConvert.DeserializeObject(body);
+                    }
+                    catch (Exception)
+                    {
+                        bodyObject = body;
+                    }
+
+
+                    var log = Newtonsoft.Json.JsonConvert.SerializeObject(new 
+                    { 
+                        Path = context.Request.Path,
+                        Method = context.Request.Method,
+                        QueryString = context.Request.QueryString.ToString(),
+                        Headers = context.Request.Headers.ToList(),
+                        Body = bodyObject,
+                        IP = context.Connection.RemoteIpAddress.ToString()
+                    });
+
+                    await File.AppendAllTextAsync(pathToLogsFile, log + Environment.NewLine);
+                }
+                catch (Exception)
+                {
+                    logger.LogError("Failed write log");
+                }
+
+                await next.Invoke(context);
+            });
 
             app.Use(next => async context =>
             {
