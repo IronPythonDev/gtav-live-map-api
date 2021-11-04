@@ -2,6 +2,7 @@
 using GTAVLiveMap.Core.Infrastructure.Repositories;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 
@@ -19,7 +20,7 @@ namespace GTAVLiveMap.TelegramBot
         public static MapMemberRepository MapMemberRepository;
         public static MapConfigRepository MapConfigRepository;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             DbContext = new(Configuration.GetConfiguration());
 
@@ -32,7 +33,7 @@ namespace GTAVLiveMap.TelegramBot
 
             Bot = new TelegramBotClient(Configuration.GetConfiguration()["BotConfiguration:ApiKey"]);
 
-            var me = Bot.GetMeAsync().GetAwaiter().GetResult();
+            var me = await Bot.GetMeAsync();
 
             Console.WriteLine($"Bot Name: {me.Username}");
 
@@ -42,9 +43,7 @@ namespace GTAVLiveMap.TelegramBot
 
             Console.WriteLine($"Start listening for @{me.Username}");
 
-            Console.ReadLine();
-
-            cts.Cancel();
+            while (true) await Task.Delay(Int32.MaxValue);
         }
     }
 }
