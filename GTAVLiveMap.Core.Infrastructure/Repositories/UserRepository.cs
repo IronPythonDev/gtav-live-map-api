@@ -40,5 +40,15 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<User> GetByTelegramID(string id)
+        {
+            return (await DbContext.QueryAsync<User>(@"SELECT * FROM public.""Users"" WHERE ""TelegramID"" = @TelegramID;", new { TelegramID = id })).FirstOrDefault();
+        }
+
+        public async Task<User> UpdateColumnById(int id , string name, string value)
+        {
+            return (await DbContext.QueryAsync<User>(@$"UPDATE public.""Users"" SET ""{name}"" = @ColumnValue  WHERE ""Id"" = @Id  RETURNING *;", new { Id = id , ColumnValue = value})).FirstOrDefault();
+        }
     }
 }

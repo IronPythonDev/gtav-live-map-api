@@ -2,9 +2,18 @@
 {
     public enum MapScopeNameEnum
     {
+        ViewAction,
+        AddAction,
         EditAction,
         EmitAction,
-        AddAction,
-        CreateInvite
+        DeleteAction,
+        ViewInvite,
+        ViewInvites,
+        CreateInvite,
+        EditInvite,
+        DeleteInvite,
+        ViewMembers,
+        EditMember,
+        DeleteMember
     }
 }

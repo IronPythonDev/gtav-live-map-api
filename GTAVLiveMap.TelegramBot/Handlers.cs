@@ -1,4 +1,5 @@
 ﻿using GTAVLiveMap.Core.Infrastructure;
+using GTAVLiveMap.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,17 +53,81 @@ namespace GTAVLiveMap.TelegramBot
             if (message.Type != MessageType.Text)
                 return;
 
-            var action = (message.Text.Split(' ').First()) switch
+            var currentUser = await Program.UserRepository.GetByTelegramID($"{message.From.Id}");
+
+            var command = message.Text.Split(' ').First();
+
+            var action = currentUser != null ? (command) switch
             {
                 "/create_map" => CreateMap(botClient, message),
+                "/auth" => Auth(botClient, message),
                 _ => Usage(botClient, message)
-            };
+            } : command == "/auth" ? Auth(botClient , message) : ConnectTelegram(botClient, message);
 
             var sentMessage = await action;
+
             Console.WriteLine($"The message was sent with id: {sentMessage.MessageId}");
+
+            static async Task<Message> ConnectTelegram(ITelegramBotClient botClient, Message message)
+            {
+                return await botClient.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: @"
+This account is not connected to gtavlivemap.com account please send your session key for authorization
+Session key you can get in developer/admin or your cabinet(if this function available)
+For login, send this command /auth {sessionKey}");
+            }
+
+            static async Task<Message> Auth(ITelegramBotClient botClient, Message message)
+            {
+                try
+                {
+                    string[] args = message.Text.Split(' ');
+
+                    if (args.Length < 2)
+                        return await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: @"Use: /auth {sessionKey}");
+
+                    string sessionKey = args[1];
+
+                    var key = await Program.SessionKeyRepository.GetByKey(sessionKey);
+
+                    if (key == null)
+                        return await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: @"Invalid session key");
+
+                    var user = await Program.UserRepository.UpdateColumnById(key.OwnerId, "TelegramID", $"{message.From.Id}");
+
+                    if (user == null)
+                        return await botClient.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: @"User not found");
+
+                    return await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: $"Successfully connected telegram for this {user.Email} account!");
+                }
+                catch (Exception)
+                {
+                    return await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: @"Failed connect account");
+                }
+            }
 
             static async Task<Message> CreateMap(ITelegramBotClient botClient, Message message)
             {
+                var currentUser = await Program.UserRepository.GetByTelegramID($"{message.From.Id}");
+
+                if (!currentUser.Roles.Contains("Admin"))
+                {
+                    return await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: @"This command available for admins");
+                }
+
                 string[] args = message.Text.Split(' ');
 
                 if (args.Length < 3)
@@ -80,23 +145,60 @@ namespace GTAVLiveMap.TelegramBot
                         chatId: message.Chat.Id,
                         text: $"Not found {email} user");
 
-                //var map = await Program.MapRepository.Add(new Domain.Entities.Map
-                //{
-                //    ApiKey = Generator.GetRandomString(16),
-                //    Name = name,
-                //    OwnerId = user.Id
-                //});
+                var map = await Program.MapRepository.Add(new Domain.Entities.Map
+                {
+                    Name = name,
+                    MaxMembers = 10,
+                    OwnerId = user.Id
+                });
 
-//                var text = @$"
-//Id: {map.Id}
-//APIKey: {map.ApiKey}
-//Name: {map.Name}
-//OwnerId: {map.OwnerId}
-//CreateAt: {map.CreatedAt}";
+                var inviteKey = await Program.InviteRepository.Add(new Domain.Entities.Invite
+                {
+                    MapId = map.Id,
+                    Key = Generator.GetRandomString(6, true),
+                    Scopes = string.Join(';', Enum.GetNames(typeof(MapScopeNameEnum)))
+                });
+
+                var member = await Program.MapMemberRepository.Add(new Domain.Entities.MapMember
+                {
+                    Scopes = inviteKey.Scopes,
+                    InviteKey = inviteKey.Key,
+                    MapId = map.Id,
+                    OwnerId = user.Id
+                });
+
+                var config = await Program.MapConfigRepository.Add(new Domain.Entities.MapConfig
+                {
+                    MapId = map.Id
+                });
+
+                var text = @$"
+
+-----------Map Details-----------
+Id: {map.Id}
+APIKey: {map.ApiKey}
+Name: {map.Name}
+OwnerId: {map.OwnerId}
+CreateAt: {map.CreatedAt}
+-----------Invite Key------------
+Id: {inviteKey.Id}
+Key: {inviteKey.Key}
+Scopes: {inviteKey.Scopes}
+CreateAt: {inviteKey.CreatedAt}
+-------------Member--------------
+Id: {member.Id}
+Key: {member.InviteKey}
+Scopes: {member.Scopes}
+-------------Config--------------
+MaxAction: {config.MaxActions}
+MaxInvites: {config.MaxInvites}
+MaxObjects: {config.MaxObjects}
+MaxMembers: {config.MaxMembers}
+";
 
                 return await botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "");
+                    text: text);
             }
 
             static async Task<Message> Usage(ITelegramBotClient botClient, Message message)
