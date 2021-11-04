@@ -13,7 +13,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<User> Add(User obj)
         {
-            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles) RETURNING *;", obj)).FirstOrDefault();
+            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"" , ""TelegramID"") VALUES(@Email , @Roles , @TelegramID) RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(int id) =>
