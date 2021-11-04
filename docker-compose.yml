@@ -16,7 +16,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     volumes:
-      - '../GTAVLiveMap/logs:/app/logs'
+      - './logs:/app/logs'
   gtavlivemap.telegram:
     container_name: 'gtav-live-map-telegram'
     build:
