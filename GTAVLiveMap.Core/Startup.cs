@@ -157,7 +157,7 @@ namespace GTAVLiveMap.Core
                         QueryString = context.Request.QueryString.ToString(),
                         Headers = context.Request.Headers.ToList(),
                         Body = bodyObject,
-                        IP = context.Connection.RemoteIpAddress.ToString()
+                        IP = context.Connection.RemoteIpAddress.MapToIPv4().ToString()
                     });
 
                     await File.AppendAllTextAsync(pathToLogsFile, log + Environment.NewLine);
