@@ -16,7 +16,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     volumes:
-      - '../GTAVLiveMap/logs:/app/logs'
+      - './logs:/app/logs'
   # nginx:
   #   image: nginx:alpine
   #   container_name: nginx
