@@ -13,7 +13,7 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
 
         public async Task<User> Add(User obj)
         {
-            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"") VALUES(@Email , @Roles) RETURNING *;", obj)).FirstOrDefault();
+            return (await DbContext.QueryAsync<User>(@"INSERT INTO public.""Users""(""Email"" , ""Roles"" , ""TelegramID"") VALUES(@Email , @Roles , @TelegramID) RETURNING *;", obj)).FirstOrDefault();
         }
 
         public async void DeleteById(int id) =>
@@ -39,6 +39,16 @@ namespace GTAVLiveMap.Core.Infrastructure.Repositories
         public void Update(User obj)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<User> GetByTelegramID(string id)
+        {
+            return (await DbContext.QueryAsync<User>(@"SELECT * FROM public.""Users"" WHERE ""TelegramID"" = @TelegramID;", new { TelegramID = id })).FirstOrDefault();
+        }
+
+        public async Task<User> UpdateColumnById(int id , string name, string value)
+        {
+            return (await DbContext.QueryAsync<User>(@$"UPDATE public.""Users"" SET ""{name}"" = @ColumnValue  WHERE ""Id"" = @Id  RETURNING *;", new { Id = id , ColumnValue = value})).FirstOrDefault();
         }
     }
 }

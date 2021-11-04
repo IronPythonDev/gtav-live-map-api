@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 
 namespace GTAVLiveMap.Core
 {
@@ -127,15 +128,17 @@ namespace GTAVLiveMap.Core
                     var pathToLogsFile = currentDitectory + "/" + logsDirectoryName + "/requests.txt";
 
                     if (!Directory.Exists(logsDirectoryName))
-                         Directory.CreateDirectory(logsDirectoryName);
+                        Directory.CreateDirectory(logsDirectoryName);
+                    
+                    context.Request.EnableBuffering();
 
-                    using var bodyReader = new StreamReader(context.Request.Body);
-
-                    object bodyObject = null;
+                    using var bodyReader = new StreamReader(context.Request.Body , Encoding.UTF8 , true, -1 , true);
 
                     var body = await bodyReader.ReadToEndAsync();
 
-                    bodyReader.Close();
+                    context.Request.Body.Position = 0;
+
+                    object bodyObject = null;
 
                     try
                     {
@@ -147,8 +150,8 @@ namespace GTAVLiveMap.Core
                     }
 
 
-                    var log = Newtonsoft.Json.JsonConvert.SerializeObject(new 
-                    { 
+                    var log = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                    {
                         Path = context.Request.Path,
                         Method = context.Request.Method,
                         QueryString = context.Request.QueryString.ToString(),
