@@ -1,5 +1,6 @@
 ﻿using GTAVLiveMap.Core.Infrastructure;
 using GTAVLiveMap.Domain.Enums;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,7 @@ namespace GTAVLiveMap.TelegramBot
             var action = currentUser != null ? (command) switch
             {
                 "/create_map" => CreateMap(botClient, message),
+                "/get_admin" => GetAdmin(botClient, message),
                 "/auth" => Auth(botClient, message),
                 _ => Usage(botClient, message)
             } : command == "/auth" ? Auth(botClient , message) : ConnectTelegram(botClient, message);
@@ -115,6 +117,26 @@ For login, send this command /auth {sessionKey}");
                         chatId: message.Chat.Id,
                         text: @"Failed connect account");
                 }
+            }
+
+            static async Task<Message> GetAdmin(ITelegramBotClient botClient, Message message)
+            {
+                var currentUser = await Program.UserRepository.GetByTelegramID($"{message.From.Id}");
+
+                var validEmails = Program.Configuration.GetSection("ValidEmails").Get<string[]>();
+
+                if (!validEmails.Contains(currentUser.Email))
+                {
+                    return await botClient.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: @"This account, not contains in available emails list");
+                }
+
+                var user = await Program.UserRepository.UpdateColumnById(currentUser.Id, "Roles", $"Admin");
+
+                return await botClient.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: @"Congratulations!! You now admin !!");
             }
 
             static async Task<Message> CreateMap(ITelegramBotClient botClient, Message message)

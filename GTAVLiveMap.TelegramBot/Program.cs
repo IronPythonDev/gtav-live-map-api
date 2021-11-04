@@ -1,5 +1,6 @@
 ﻿using GTAVLiveMap.Core.Infrastructure.Contexts;
 using GTAVLiveMap.Core.Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,10 +20,12 @@ namespace GTAVLiveMap.TelegramBot
         public static InviteRepository InviteRepository;
         public static MapMemberRepository MapMemberRepository;
         public static MapConfigRepository MapConfigRepository;
-
+        public static IConfiguration Configuration;
         static async Task Main(string[] args)
         {
-            DbContext = new(Configuration.GetConfiguration());
+            Configuration = TelegramBot.Configuration.GetConfiguration();
+            //"2068920547:AAF4-c2frCSJYiYvcWC2WXR1zvJRSyz8wC8"
+            DbContext = new(Configuration);
 
             MapRepository = new(DbContext);
             UserRepository = new(DbContext);
@@ -31,7 +34,7 @@ namespace GTAVLiveMap.TelegramBot
             MapMemberRepository = new(DbContext);
             MapConfigRepository = new(DbContext);
 
-            Bot = new TelegramBotClient(Configuration.GetConfiguration()["BotConfiguration:ApiKey"]);
+            Bot = new TelegramBotClient(Configuration["BotConfiguration:ApiKey"]);
 
             var me = await Bot.GetMeAsync();
 
