@@ -80,23 +80,23 @@ namespace GTAVLiveMap.TelegramBot
                         chatId: message.Chat.Id,
                         text: $"Not found {email} user");
 
-                var map = await Program.MapRepository.Add(new Domain.Entities.Map
-                {
-                    ApiKey = Generator.GetRandomString(16),
-                    Name = name,
-                    OwnerId = user.Id
-                });
+                //var map = await Program.MapRepository.Add(new Domain.Entities.Map
+                //{
+                //    ApiKey = Generator.GetRandomString(16),
+                //    Name = name,
+                //    OwnerId = user.Id
+                //});
 
-                var text = @$"
-Id: {map.Id}
-APIKey: {map.ApiKey}
-Name: {map.Name}
-OwnerId: {map.OwnerId}
-CreateAt: {map.CreatedAt}";
+//                var text = @$"
+//Id: {map.Id}
+//APIKey: {map.ApiKey}
+//Name: {map.Name}
+//OwnerId: {map.OwnerId}
+//CreateAt: {map.CreatedAt}";
 
                 return await botClient.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: text);
+                    text: "");
             }
 
             static async Task<Message> Usage(ITelegramBotClient botClient, Message message)
