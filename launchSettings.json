@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "gtavlivemap.core": "StartWithoutDebugging",
+        "gtavlivemap.telegram": "StartWithoutDebugging",
+        "postgres": "StartWithoutDebugging"
+      },
+      "commandVersion": "1.0"
+    },
+    "DebugTelegram": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "gtavlivemap.core": "DoNotStart",
+        "gtavlivemap.telegram": "StartDebugging",
+        "postgres": "StartWithoutDebugging"
+      },
+      "commandVersion": "1.0"
+    }
+  }
+}

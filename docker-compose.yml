@@ -17,6 +17,15 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
     volumes:
       - '../GTAVLiveMap/logs:/app/logs'
+  gtavlivemap.telegram:
+    container_name: 'gtav-live-map-telegram'
+    build:
+      context: .
+      dockerfile: GTAVLiveMap.TelegramBot/Dockerfile
+    depends_on:
+      - 'postgres'
+    networks:
+      - gtavlivemap-network
   # nginx:
   #   image: nginx:alpine
   #   container_name: nginx

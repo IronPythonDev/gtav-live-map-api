@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "GTAVLiveMap.TelegramBot": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "DockerfileRunArguments": "--network=\"host\""
+    }
+  }
+}
