@@ -365,3 +365,5 @@ FodyWeavers.xsd
 node_modules
 GTAVLiveMap.Core/appsettings.Development.json
 GTAVLiveMap.ClientApp/
+
+dumps/
